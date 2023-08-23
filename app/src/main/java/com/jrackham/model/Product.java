@@ -6,17 +6,8 @@ public class Product{
     private int priority;
     private int categoryId;
 
-    public Product() {
+    public Product() {}
 
-    }
-
-    //metodo para agregar productos a lista fake
-    public Product(String name, Float price, int priority, int categoryId) {
-        this.name = name;
-        this.price = price;
-        this.priority = priority;
-        this.categoryId = categoryId;
-    }
     public Product(String name, Float price, int categoryId) {
         this.name = name;
         this.price = price;
