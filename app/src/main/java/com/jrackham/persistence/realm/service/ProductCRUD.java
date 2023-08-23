@@ -1,10 +1,10 @@
-package com.jrackham.persistence;
+package com.jrackham.persistence.realm.service;
 
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.jrackham.model.realm.ProductRealm;
+import com.jrackham.persistence.realm.model.ProductRealm;
 
 import java.util.List;
 

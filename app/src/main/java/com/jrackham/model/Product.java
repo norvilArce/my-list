@@ -1,37 +1,27 @@
-package com.jrackham.model.realm;
+package com.jrackham.model;
 
-import com.jrackham.app.MyApplication;
-
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-public class ProductRealm extends RealmObject {
-    @PrimaryKey
-    private int id;
+public class Product{
     private String name;
     private Float price;
     private int priority;
     private int categoryId;
 
-    public ProductRealm() {
+    public Product() {
+
     }
 
-    public ProductRealm(String name, Float price, int priority, int categoryId) {
-        this.id = MyApplication.getProductId().incrementAndGet();
+    //metodo para agregar productos a lista fake
+    public Product(String name, Float price, int priority, int categoryId) {
         this.name = name;
         this.price = price;
         this.priority = priority;
         this.categoryId = categoryId;
     }
-
-    public ProductRealm(String name, Float price, int categoryId) {
+    public Product(String name, Float price, int categoryId) {
         this.name = name;
         this.price = price;
+        this.priority = 0;
         this.categoryId = categoryId;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -69,8 +59,7 @@ public class ProductRealm extends RealmObject {
     @Override
     public String toString() {
         return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", price=" + price +
                 ", priority=" + priority +
                 ", categoryId=" + categoryId +

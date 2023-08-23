@@ -5,8 +5,8 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.jrackham.model.realm.CategoryRealm;
-import com.jrackham.model.realm.ProductRealm;
+import com.jrackham.persistence.realm.model.CategoryRealm;
+import com.jrackham.persistence.realm.model.ProductRealm;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

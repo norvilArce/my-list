@@ -1,4 +1,4 @@
-package com.jrackham.logic;
+package com.jrackham.util;
 
 import android.app.Activity;
 import android.content.Context;

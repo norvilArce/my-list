@@ -1,11 +1,11 @@
-package com.jrackham;
+package com.jrackham.ui;
 
-import static com.jrackham.logic.Util.closeKeyboard;
-import static com.jrackham.persistence.CategoryCRUD.addProductToCategoryById;
-import static com.jrackham.persistence.CategoryCRUD.getAllCategories;
-import static com.jrackham.persistence.ProductCRUD.addProductRealm;
-import static com.jrackham.persistence.ProductCRUD.getAllProductRealmsSortByPriority;
-import static com.jrackham.persistence.ProductCRUD.updateProductsPriorities;
+import static com.jrackham.util.Util.closeKeyboard;
+import static com.jrackham.persistence.realm.service.CategoryCRUD.addProductToCategoryById;
+import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
+import static com.jrackham.persistence.realm.service.ProductCRUD.addProductRealm;
+import static com.jrackham.persistence.realm.service.ProductCRUD.getAllProductRealmsSortByPriority;
+import static com.jrackham.persistence.realm.service.ProductCRUD.updateProductsPriorities;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -24,12 +24,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.jrackham.databinding.ActivityMainBinding;
-import com.jrackham.mapper.Mapper;
-import com.jrackham.mapper.MapperImpl;
-import com.jrackham.model.base.Product;
-import com.jrackham.model.realm.CategoryRealm;
-import com.jrackham.model.realm.ProductRealm;
+import com.jrackham.R;
+import com.jrackham.util.mapper.Mapper;
+import com.jrackham.util.mapper.MapperImpl;
+import com.jrackham.model.Product;
+import com.jrackham.persistence.realm.model.CategoryRealm;
+import com.jrackham.persistence.realm.model.ProductRealm;
 
 import java.util.List;
 import java.util.stream.Collectors;

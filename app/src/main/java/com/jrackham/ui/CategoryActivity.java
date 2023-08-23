@@ -1,8 +1,8 @@
-package com.jrackham;
+package com.jrackham.ui;
 
-import static com.jrackham.logic.Util.closeKeyboard;
-import static com.jrackham.persistence.CategoryCRUD.addCategory;
-import static com.jrackham.persistence.CategoryCRUD.getAllCategories;
+import static com.jrackham.util.Util.closeKeyboard;
+import static com.jrackham.persistence.realm.service.CategoryCRUD.addCategory;
+import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -13,12 +13,11 @@ import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.jrackham.databinding.ActivityCategoryBinding;
-import com.jrackham.model.realm.CategoryRealm;
+import com.jrackham.R;
+import com.jrackham.persistence.realm.model.CategoryRealm;
 
 import java.util.List;
 
-import io.realm.Realm;
 import io.realm.RealmList;
 
 public class CategoryActivity extends AppCompatActivity implements View.OnClickListener {

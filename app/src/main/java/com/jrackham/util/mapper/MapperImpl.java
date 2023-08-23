@@ -1,7 +1,7 @@
-package com.jrackham.mapper;
+package com.jrackham.util.mapper;
 
-import com.jrackham.model.base.Product;
-import com.jrackham.model.realm.ProductRealm;
+import com.jrackham.model.Product;
+import com.jrackham.persistence.realm.model.ProductRealm;
 
 public class MapperImpl implements Mapper{
     @Override

@@ -1,4 +1,4 @@
-package com.jrackham;
+package com.jrackham.ui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.jrackham.model.base.Category;
-import com.jrackham.model.realm.CategoryRealm;
+import com.jrackham.R;
+import com.jrackham.persistence.realm.model.CategoryRealm;
 
 import java.util.List;
 

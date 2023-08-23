@@ -1,4 +1,4 @@
-package com.jrackham.model.realm;
+package com.jrackham.persistence.realm.model;
 
 import com.jrackham.app.MyApplication;
 
