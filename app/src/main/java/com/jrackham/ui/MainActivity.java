@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.jrackham.R;
+import com.jrackham.databinding.ActivityMainBinding;
 import com.jrackham.util.mapper.Mapper;
 import com.jrackham.util.mapper.MapperImpl;
 import com.jrackham.model.Product;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button mbtnAddProduct, mbtnNewProduct, mbtnProductValidate, mbtnDone;
     EditText metNameProduct, metPriceProduct;
     Spinner mspnCategory;
+    ImageButton mimbtnAddCategory;
 
     //persistencia
     private Realm realm;
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mlvProducts.setAdapter(adapter);
 
         mbtnAddProduct.setOnClickListener(this);
+        mimbtnAddCategory.setOnClickListener(this);
 
         metPriceProduct.setText("");
         metNameProduct.setText("");
@@ -81,23 +85,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         categories = getAllCategories();
         setupView();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.option_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.itmCategory:
-                goToCategoryActivity();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     private void goToCategoryActivity() {
@@ -111,8 +98,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         metNameProduct = binding.etNameProdcuct;
         metPriceProduct = binding.etPriceProdcuct;
         mspnCategory = binding.spnCategory;
+        mimbtnAddCategory = binding.imbtnAddCategory;
         List<String> collect = categories.stream().map(CategoryRealm::getName).collect(Collectors.toList());
-        mspnCategory.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, collect));
+        mspnCategory.setAdapter(new ArrayAdapter<>(this, R.layout.items_spinner_categories, collect));
     }
 
     @Override
@@ -121,6 +109,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnAddProduct:
                 Product product = createProduct();
                 validatePriority(product);
+                break;
+            case R.id.imbtnAddCategory:
+                goToCategoryActivity();
+                break;
         }
     }
 

@@ -1,67 +1,198 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/fondo_activity"
     tools:context=".ui.MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="650dp"
-        android:layout_weight="7"
-        android:background="@color/teal_700"
-        android:orientation="horizontal"
-        android:padding="5dp">
+    <ImageView
+        android:id="@+id/ivHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/list"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0" />
 
-        <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintlayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/res_bg"
+        android:elevation="15dp"
+        android:translationY="-30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivHeader"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent=".85">
+
+        <TextView
+            android:id="@+id/etTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Lista de compras"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
+
+        <TextView
+            android:id="@+id/etMessage"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@color/teal_700"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:text="Añade elementos a tu lista y ordenalos segun tu necesidad."
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/etTitle"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/etTitle"
+            app:layout_constraintTop_toBottomOf="@id/etTitle"
+            app:layout_constraintVertical_bias="0.0" />
 
-            <EditText
-                android:id="@+id/etNameProdcuct"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:hint="Nombre"
-                android:textSize="15dp" />
 
-            <EditText
-                android:id="@+id/etPriceProdcuct"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:hint="Precio"
-                android:inputType="numberDecimal"
-                android:textSize="15dp" />
+        <View
+            android:id="@+id/line"
+            android:layout_width="0dp"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/fondo_activity"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias=".5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etMessage"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintWidth_percent=".9" />
 
-            <Spinner
-                android:id="@+id/spnCategory"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+        <ImageView
+            android:id="@+id/ivCheck"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/baseline_check_24"
+            app:layout_constraintBottom_toBottomOf="@+id/etNameProdcuct"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@id/line"
+            app:layout_constraintTop_toTopOf="@+id/etNameProdcuct" />
 
-        </LinearLayout>
+        <EditText
+            android:id="@+id/etNameProdcuct"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_bg_product"
+            android:hint="Nombre"
+            android:paddingLeft="6dp"
+            android:paddingVertical="3dp"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/ivCheck"
+            app:layout_constraintTop_toBottomOf="@id/line"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintWidth_percent=".75" />
+
+        <ImageView
+            android:id="@+id/ivMoney"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/baseline_attach_money_24"
+            app:layout_constraintBottom_toBottomOf="@+id/etPriceProdcuct"
+            app:layout_constraintStart_toStartOf="@id/ivCheck"
+            app:layout_constraintTop_toTopOf="@+id/etPriceProdcuct" />
+
+        <EditText
+            android:id="@+id/etPriceProdcuct"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/et_bg_product"
+            android:hint="Precio"
+            android:inputType="numberDecimal"
+            android:paddingLeft="6dp"
+            android:paddingVertical="3dp"
+            android:textSize="16sp"
+            android:textColor="@color/texto"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/ivMoney"
+            app:layout_constraintTop_toBottomOf="@id/etNameProdcuct"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintWidth_percent=".20" />
+
+        <Spinner
+            android:id="@+id/spnCategory"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/spn_style_categories"
+            app:layout_constraintBottom_toBottomOf="@+id/etPriceProdcuct"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/etPriceProdcuct"
+            app:layout_constraintTop_toTopOf="@+id/etPriceProdcuct"
+            app:layout_constraintWidth_percent=".45" />
+
+        <ImageButton
+            android:id="@+id/imbtnAddCategory"
+            android:layout_width="25dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="3dp"
+            android:background="@null"
+            android:src="@android:drawable/ic_input_add"
+            app:layout_constraintBottom_toBottomOf="@+id/etPriceProdcuct"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/spnCategory"
+            app:layout_constraintTop_toTopOf="@+id/etPriceProdcuct" />
 
         <Button
             android:id="@+id/btnAddProduct"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Agregar" />
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_bg_product"
+            android:text="Agregar"
+            android:textAllCaps="false"
+            android:textColor="@color/texto_boton_agregar"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etPriceProdcuct"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintWidth_percent=".8" />
 
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ListView
         android:id="@+id/lvProducts"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintlayout"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent=".9" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

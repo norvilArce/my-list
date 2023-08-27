@@ -14,6 +14,7 @@ import android.widget.ListView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.jrackham.R;
+import com.jrackham.databinding.ActivityCategoryBinding;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 
 import java.util.List;

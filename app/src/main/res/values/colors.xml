@@ -7,4 +7,25 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+    <color name="primaryColor">#007ACC</color>
+    <color name="accentColor">#FF5722</color>
+    <color name="textColorPrimary">#333333</color>
+    <color name="backgroundColor">#F0F0F0</color>
+
+
+
+    <color name="pink">#C8CA889E</color>
+
+    <!--main activity-->
+    <color name="fondo_activity">#F0F0F0</color>
+    <color name="fondo_cuadro">#F0F0F0</color>
+    <color name="borde_cuadro">#F0F0F0</color>
+    <color name="boton_agregar">#F4E23C</color>
+    <color name="texto_boton_agregar">#E37F02</color>
+    <color name="texto">#FF000000</color>
+    <color name="texto_hint">#8E8888</color>
+    <color name="borde_edit_text">#E37F02</color>
+    <color name="status_bar">#F6E139</color>
 </resources>

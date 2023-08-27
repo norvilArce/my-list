@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FFFFFF</color>
+    <color name="white">#000000</color>
+
+
+    <color name="primaryColor">#007ACC</color>
+    <color name="accentColor">#FF5722</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="backgroundColor">#000000</color>
+
+    <color name="pink">#C8CA889E</color>
+
+    <!--main activity-->
+
+    <color name="fondo_activity">#672E1D</color>
+    <color name="fondo_cuadro">#AD5A2B</color>
+    <color name="borde_cuadro">#D8D7D7</color>
+    <color name="boton_agregar">#D39846</color>
+    <color name="texto_boton_agregar">#B35033</color>
+    <color name="texto">#FFFFFFFF</color>
+    <color name="texto_hint">#8BB1ADAD</color>
+    <color name="borde_edit_text">#D39846</color>
+    <color name="status_bar">#DB7B2D</color>
+</resources>
