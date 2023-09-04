@@ -220,26 +220,41 @@
             android:text="Filtrar"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lvProducts"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvProducts"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalProducts"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llProductOptions"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintWidth_percent=".9" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvProducts"
+    <TextView
+        android:id="@+id/tvTotalProducts"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="7dp"
+        android:text="Total de productos: "
+        android:textAlignment="textEnd"
+        android:textColor="@color/texto"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalAmount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent=".9" />
+
+    <TextView
+        android:id="@+id/tvTotalAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="7dp"
+        android:text="Monto total: "
+        android:textColor="@color/texto"
+        android:textAlignment="textEnd"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lvProducts"
-        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent=".9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

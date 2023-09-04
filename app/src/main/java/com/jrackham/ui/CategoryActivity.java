@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
 import com.jrackham.databinding.ActivityCategoryBinding;
@@ -30,10 +31,9 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     EditText metNameCategory;
 
     private List<CategoryRealm> categories = new RealmList<>();
-    //List<CategoryRealm> categories= new ArrayList<>();
 
     //list
-    private ListView mlvCategories;
+    private RecyclerView mlvCategories;
     private CategoryAdapter adapter;
 
     @Override

@@ -11,19 +11,16 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
 import com.jrackham.databinding.ActivityMainBinding;
@@ -53,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     List<CategoryRealm> categories = new RealmList<>();
 
     //list
-    private ListView mlvProducts;
+    private RecyclerView mrvProducts;
     private ProductAdapter adapter;
     private List<ProductRealm> products = new RealmList<>();
     int leftLimit = 0;
@@ -71,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setupView();
 
         adapter = new ProductAdapter(this, R.layout.items_products, products);
-        mlvProducts.setAdapter(adapter);
+        mrvProducts.setAdapter(adapter);
 
         mbtnAddProduct.setOnClickListener(this);
         mimbtnAddCategory.setOnClickListener(this);
@@ -94,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setupView() {
         mbtnAddProduct = binding.btnAddProduct;
-        mlvProducts = binding.lvProducts;
+        mrvProducts = binding.rvProducts;
         metNameProduct = binding.etNameProdcuct;
         metPriceProduct = binding.etPriceProdcuct;
         mspnCategory = binding.spnCategory;

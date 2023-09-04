@@ -1,18 +1,21 @@
 package com.jrackham.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 
 import java.util.List;
 
-public class CategoryAdapter extends BaseAdapter {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
     private Context context;
     private int layout;
@@ -24,46 +27,36 @@ public class CategoryAdapter extends BaseAdapter {
         this.categories = categories;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.bind(categories.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
         return categories.size();
     }
 
-    @Override
-    public Object getItem(int position) {
-        return categories.get(position);
-    }
+    class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView name;
 
-    @Override
-    public long getItemId(int id) {
-        return id;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup viewGroup) {
-
-        ViewHolder vh;
-        if (convertView == null) {
-            LayoutInflater layoutInflater = LayoutInflater.from(this.context);
-            convertView = layoutInflater.inflate(R.layout.items_categories, null);
-
-            vh = new ViewHolder();
-            vh.name = convertView.findViewById(R.id.tvNameCategory);
-
-            convertView.setTag(vh);
-        } else {
-            vh = (ViewHolder) convertView.getTag();
+        public ViewHolder(View itemView) {
+            super(itemView);
+            name = itemView.findViewById(R.id.tvNameCategory);
         }
 
-        final CategoryRealm category = categories.get(position);
+        @SuppressLint("SetTextI18n")
+        public void bind(final CategoryRealm category) {
 
-        vh.name.setText(category.getName());
-
-        return convertView;
+            this.name.setText(category.getName());
+        }
     }
-
-    static class ViewHolder {
-        private TextView name;
-    }
-
 }
