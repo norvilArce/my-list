@@ -98,6 +98,7 @@
             android:paddingLeft="6dp"
             android:paddingVertical="3dp"
             android:textSize="16sp"
+            android:textColor="@color/texto"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -141,7 +142,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginLeft="10dp"
-            android:background="@drawable/spn_style_categories"
+            android:spinnerMode="dialog"
+            android:backgroundTint="@color/borde_edit_text"
             app:layout_constraintBottom_toBottomOf="@+id/etPriceProdcuct"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -184,15 +186,60 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ListView
-        android:id="@+id/lvProducts"
+    <LinearLayout
+        android:id="@+id/llProductOptions"
+        android:visibility="gone"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/constraintlayout"
         app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent=".9">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:textColor="@color/texto"
+            android:textAllCaps="false"
+            android:layout_marginHorizontal="5dp"
+            android:background="@drawable/btn_bg_product"
+            android:text="Seleccionar items"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_bg_product"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:layout_marginHorizontal="5dp"
+            android:textAllCaps="false"
+            android:textColor="@color/texto"
+            android:text="Filtrar"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lvProducts"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llProductOptions"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent=".9" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvProducts"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lvProducts"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintWidth_percent=".9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
