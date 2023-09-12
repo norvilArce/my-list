@@ -22,7 +22,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/lvCategories"
+        android:id="@+id/rvCategories"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginVertical="5dp"
@@ -41,7 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintBottom_toTopOf="lvCategories"
         app:layout_constraintWidth_percent=".95">
 
         <EditText

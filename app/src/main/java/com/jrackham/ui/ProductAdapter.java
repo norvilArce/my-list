@@ -7,15 +7,16 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
+import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
-import com.jrackham.persistence.realm.model.ProductRealm;
 
 import java.util.List;
 
@@ -23,11 +24,24 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     private Context context;
     private int layout;
-    private List<ProductRealm> products;
+    private List<Product> products;
+    private OnProductClickDeleteListener deleteListener;
+    private OnProductLongClickListener longClickListener;
+    private OnProductClickListener clickListener;
 
-    public ProductAdapter(Context context, int layout, List<ProductRealm> products) {
+    public ProductAdapter(Context context, int layout, List<Product> products,
+                          OnProductClickDeleteListener deleteListener,
+                          OnProductLongClickListener longClickListener,
+                          OnProductClickListener clickListener) {
         this.context = context;
         this.layout = layout;
+        this.products = products;
+        this.deleteListener = deleteListener;
+        this.longClickListener = longClickListener;
+        this.clickListener = clickListener;
+    }
+
+    public void setProducts(List<Product> products) {
         this.products = products;
     }
 
@@ -41,7 +55,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(products.get(position));
+        holder.bind(products.get(position), deleteListener, longClickListener, clickListener);
     }
 
     @Override
@@ -49,25 +63,63 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         return products.size();
 
     }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView name;
-        private TextView price;
-        private TextView category;
+        private TextView mtvName;
+        private TextView mtvPrice;
+        private TextView mtvCategory;
+        private RelativeLayout mrlCheck;
+        private CheckBox mcbProductSelected;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.tvNameCategory);
-            price = itemView.findViewById(R.id.tvNameCategory);
-            category = itemView.findViewById(R.id.tvNameCategory);
+            mtvName = itemView.findViewById(R.id.tvNameProduct);
+            mtvPrice = itemView.findViewById(R.id.tvProductPrice);
+            mtvCategory = itemView.findViewById(R.id.tvCategory);
+            mrlCheck = itemView.findViewById(R.id.rlCheck);
+            mcbProductSelected = itemView.findViewById(R.id.cbAllProductSelected);
         }
 
         @SuppressLint("SetTextI18n")
-        public void bind(final ProductRealm product) {
+        public void bind(final Product product,
+                         final OnProductClickDeleteListener deleteListener,
+                         final OnProductLongClickListener longClickListener,
+                         OnProductClickListener clickListener) {
 
-            this.name.setText(product.getName());
-            this.price.setText("S/."+product.getPrice().toString());
+            this.mtvName.setText(product.getName());
+            this.mtvPrice.setText("S/." + product.getPrice().toString());
             CategoryRealm category = getCategoryById(product.getCategoryId());
-            this.category.setText(category.getName());
+            this.mtvCategory.setText(category.getName());
+
+            this.mrlCheck.setVisibility((product.isSelectable()) ? View.VISIBLE : View.GONE);
+            this.mcbProductSelected.setChecked(product.isSelected());
+
+            //cuando se da click al elemento
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickListener.onProductClick(mcbProductSelected, product, getAdapterPosition());
+                }
+            });
+
+            //cuando se mantiene presionado
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    longClickListener.onProductLongClick(mrlCheck, product, getAdapterPosition());
+                    return true;
+                }
+            });
+
+            //cuando selecciona el check
+            mrlCheck.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteListener.onDeleteProduct(product, getAdapterPosition());
+                }
+            });
         }
     }
-
 }
+

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
@@ -33,7 +34,8 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     private List<CategoryRealm> categories = new RealmList<>();
 
     //list
-    private RecyclerView mlvCategories;
+    private RecyclerView mrvCategories;
+    RecyclerView.LayoutManager layoutManager;
     private CategoryAdapter adapter;
 
     @Override
@@ -45,8 +47,10 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         categories = getAllCategories();
         setupView();
 
+        layoutManager = new LinearLayoutManager(this);
         adapter = new CategoryAdapter(this, R.layout.items_categories, categories);
-        mlvCategories.setAdapter(adapter);
+        mrvCategories.setLayoutManager(layoutManager);
+        mrvCategories.setAdapter(adapter);
 
         mbtnAddCategory.setOnClickListener(this);
 
@@ -56,7 +60,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     private void setupView() {
         mbtnAddCategory = binding.btnAddCategory;
         metNameCategory = binding.etNameCategory;
-        mlvCategories = binding.lvCategories;
+        mrvCategories = binding.rvCategories;
     }
 
     @Override
@@ -71,13 +75,6 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private CategoryRealm createCategory() {
-        /*Integer id = 1;
-        if (categories.size() > 0) {
-            List<Integer> ids = categories.stream().map(CategoryRealm::getId).collect(Collectors.toList());
-            Log.e(TAG, "ids: -> " + ids);
-            id += ids.stream().max(Integer::compare).get();
-            Log.e(TAG, "id max: -> " + id);
-        }*/
         String name = metNameCategory.getText().toString().trim();
         Log.e(TAG, "name: -> " + name);
         CategoryRealm categoryRealm = new CategoryRealm(name);

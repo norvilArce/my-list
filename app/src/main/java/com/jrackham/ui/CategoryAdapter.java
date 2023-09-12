@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
 import com.jrackham.persistence.realm.model.CategoryRealm;
+import com.jrackham.persistence.realm.model.ProductRealm;
 
 import java.util.List;
 

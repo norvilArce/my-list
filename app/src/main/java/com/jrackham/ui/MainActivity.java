@@ -1,12 +1,13 @@
 package com.jrackham.ui;
 
-import static com.jrackham.util.Util.closeKeyboard;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.addProductToCategoryById;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
 import static com.jrackham.persistence.realm.service.ProductCRUD.addProductRealm;
 import static com.jrackham.persistence.realm.service.ProductCRUD.getAllProductRealmsSortByPriority;
 import static com.jrackham.persistence.realm.service.ProductCRUD.updateProductsPriorities;
+import static com.jrackham.util.Util.closeKeyboard;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,45 +15,59 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
 import com.jrackham.databinding.ActivityMainBinding;
-import com.jrackham.util.mapper.Mapper;
-import com.jrackham.util.mapper.MapperImpl;
 import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 import com.jrackham.persistence.realm.model.ProductRealm;
+import com.jrackham.util.mapper.Mapper;
+import com.jrackham.util.mapper.MapperImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "MainActivity";
-    ActivityMainBinding binding;
     Mapper mapper = new MapperImpl();
+    //ui
+    ActivityMainBinding binding;
     Button mbtnAddProduct, mbtnNewProduct, mbtnProductValidate, mbtnDone;
     EditText metNameProduct, metPriceProduct;
     Spinner mspnCategory;
-    ImageButton mimbtnAddCategory;
+    TextView mtvTotalProducts, mtvTotalAmount;
+    ImageButton mimbtnAddCategory, mibDeleteProduct;
+    LinearLayout mllProductOptions;
+    CheckBox mcbAllProductSelected;
 
     //persistencia
     private Realm realm;
     List<CategoryRealm> categories = new RealmList<>();
+    private List<ProductRealm> productRealms = new RealmList<>();
+
 
     //list
+    private List<Product> products = new ArrayList<>();
     private RecyclerView mrvProducts;
     private ProductAdapter adapter;
-    private List<ProductRealm> products = new RealmList<>();
+    RecyclerView.LayoutManager layoutManager;
+
     int leftLimit = 0;
     int rightLimit = 0;
     int media = 0;
@@ -64,24 +79,91 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(binding.getRoot());
 
         categories = getAllCategories();
-        products = getAllProductRealmsSortByPriority();
+        productRealms = getAllProductRealmsSortByPriority();
+        products = mapper.productsRealmToProducts(productRealms);
         setupView();
 
-        adapter = new ProductAdapter(this, R.layout.items_products, products);
+        layoutManager = new LinearLayoutManager(this);
+        adapter = new ProductAdapter(this, R.layout.items_products, products, new OnProductClickDeleteListener() {
+            @Override
+            public void onDeleteProduct(Product product, int position) {
+                Toast.makeText(MainActivity.this, "Este producto se borrara-> " + product.getName() + ", priority: " + product.getPriority(), Toast.LENGTH_LONG).show();
+            }
+        }, new OnProductLongClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public boolean onProductLongClick(View view, Product product, int position) {
+                mllProductOptions.setVisibility(View.VISIBLE);
+                products.forEach(p -> p.setSelectable(true));
+                products.get(position).setSelected(true);
+                adapter.setProducts(products);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+        }, new OnProductClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public boolean onProductClick(CheckBox checkBox, Product product, int position) {
+                if (areCheckBoxesSelectables()) {
+                    product.setSelected(!checkBox.isChecked());
+                    adapter.setProducts(products);
+                    adapter.notifyDataSetChanged();
+                }
+                return true;
+            }
+        });
+        mrvProducts.setLayoutManager(layoutManager);
         mrvProducts.setAdapter(adapter);
 
         mbtnAddProduct.setOnClickListener(this);
         mimbtnAddCategory.setOnClickListener(this);
+        mibDeleteProduct.setOnClickListener(this);
+        mcbAllProductSelected.setOnCheckedChangeListener(this);
 
-        metPriceProduct.setText("");
-        metNameProduct.setText("");
+        updateViews();
+    }
+
+    private boolean areCheckBoxesSelectables() {
+        boolean selectable = false;
+        List<Boolean> collect = products.stream().map(Product::isSelectable).collect(Collectors.toList());
+        for (boolean b : collect) {
+            if (b) {
+                selectable = true;
+                break;
+            }
+        }
+        return selectable;
+    }
+    private boolean areCheckBoxesSelected() {
+        boolean selected = false;
+        List<Boolean> collect = products.stream().map(Product::isSelected).collect(Collectors.toList());
+        for (boolean b : collect) {
+            if (b) {
+                selected = true;
+                break;
+            }
+        }
+        return selected;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         categories = getAllCategories();
+        products = mapper.productsRealmToProducts(getAllProductRealmsSortByPriority());
         setupView();
+        updateViews();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateViews() {
+        metPriceProduct.setText("");
+        metNameProduct.setText("");
+
+        mtvTotalProducts.setText(products.size() + " productos: ");
+        double totalAmount = productRealms.stream().mapToDouble(ProductRealm::getPrice).sum();
+        double amountRound = Math.round(totalAmount * 100.0) / 100.0;
+        mtvTotalAmount.setText("S/. " + amountRound);
     }
 
     private void goToCategoryActivity() {
@@ -89,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
+    @SuppressLint("SetTextI18n")
     private void setupView() {
         mbtnAddProduct = binding.btnAddProduct;
         mrvProducts = binding.rvProducts;
@@ -96,8 +179,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         metPriceProduct = binding.etPriceProdcuct;
         mspnCategory = binding.spnCategory;
         mimbtnAddCategory = binding.imbtnAddCategory;
-        List<String> collect = categories.stream().map(CategoryRealm::getName).collect(Collectors.toList());
-        mspnCategory.setAdapter(new ArrayAdapter<>(this, R.layout.items_spinner_categories, collect));
+        mtvTotalProducts = binding.tvTotalProducts;
+        mtvTotalAmount = binding.tvTotalAmount;
+        mibDeleteProduct = binding.ibDeleteProduct;
+        mllProductOptions = binding.llProductOptions;
+        mcbAllProductSelected = binding.cbAllProductSelected;
+        List<String> categoryNames = categories.stream().map(CategoryRealm::getName).collect(Collectors.toList());
+        mspnCategory.setAdapter(new ArrayAdapter<>(this, R.layout.items_spinner_categories, categoryNames));
     }
 
     @Override
@@ -110,7 +198,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.imbtnAddCategory:
                 goToCategoryActivity();
                 break;
+            case R.id.ibDeleteProduct:
+                deleteSelectedProducts();
+                break;
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    public void onBackPressed() {
+        if (mllProductOptions.getVisibility()==View.VISIBLE){
+            if (areCheckBoxesSelected()) {
+                mcbAllProductSelected.setChecked(false);
+                mcbAllProductSelected.setSelected(false);
+                products.forEach(p -> p.setSelected(false));
+                adapter.setProducts(products);
+            } else{
+                mllProductOptions.setVisibility(View.GONE);
+                products.forEach(p -> p.setSelectable(false));
+                adapter.setProducts(products);
+            }
+            adapter.notifyDataSetChanged();
+        }else{
+            super.onBackPressed();
+        }
+    }
+    private void deleteSelectedProducts() {
+        List<Product> productsThatWillDelete = products.stream().filter(Product::isSelected).collect(Collectors.toList());
+        Toast.makeText(this, "Se eliminaran los productos: " + productsThatWillDelete.stream().map(Product::getName).collect(Collectors.toList()), Toast.LENGTH_LONG).show();
     }
 
     private Product createProduct() {
@@ -129,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return new Product(name, Float.parseFloat(price), category.getId());
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     void validatePriority(Product product) {
         if (product == null) {
             Toast.makeText(this, "agrega bien", Toast.LENGTH_SHORT).show();
@@ -151,14 +267,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             addProductRealm(productRealm);
             addProductToCategoryById(productRealm);
             updateInitLimits();
-            adapter.notifyDataSetChanged();
         } else {
             Log.d(TAG, "abriendo alert dialog... ");
             showAlertDialogValidatePriority(product);
-            adapter.notifyDataSetChanged();
         }
-        metPriceProduct.setText("");
-        metNameProduct.setText("");
+        adapter.notifyDataSetChanged();
         Log.d(TAG, products.toString());
     }
 
@@ -222,6 +335,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 sortProductInList(product);
                 updateInitLimits();
                 dialog.dismiss();
+                products = mapper.productsRealmToProducts(getAllProductRealmsSortByPriority());
+                updateViews();
                 closeKeyboard(MainActivity.this);
             }
         });
@@ -252,7 +367,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.e(TAG, "media: " + media);
         if (media >= 0) {
             mbtnNewProduct.setText(product.getName());
-            mbtnProductValidate.setText(products.get(media).getName());
+            mbtnProductValidate.setText(products.get(media).getName());//todo validar si es products o productRealms
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            products.forEach(p -> p.setSelected(true));
+        } else {
+            products.forEach(p -> p.setSelected(false));
+        }
+        adapter.setProducts(products);
+        adapter.notifyDataSetChanged();
     }
 }
