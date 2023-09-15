@@ -14,6 +14,11 @@
         <!-- Customize your theme here. -->
         <item name="android:textColor">@color/texto</item>
         <item name="android:textColorHint">@color/texto_hint</item>
+        <item name="android:windowBackground">@color/fondo_cuadro</item>
     </style>
 
+    <!-- http://stackoverflow.com/questions/1883425/android-borderless-dialog -->
+    <style name="Theme_Dialog_Translucent" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 </resources>

@@ -28,4 +28,8 @@
     <color name="borde_edit_text">#D39846</color>
     <color name="status_bar">#DB7B2D</color>
     <color name="text_title">#D8D7D7</color>
+
+    <color name="button_normal">#D39846</color>
+    <color name="button_pressed">#B35033</color>
+    <color name="dialog_divider">@color/borde_edit_text</color>
 </resources>

@@ -13,13 +13,14 @@ import static com.jrackham.util.Validation.areCheckBoxesSelected;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -231,8 +232,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @SuppressLint("ResourceAsColor")
     private void showAlertDialogCloseAppConfirmation() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // con este tema personalizado evitamos los bordes por defecto
+        Dialog customDialog = new Dialog(this,R.style.Theme_Dialog_Translucent);
+        //deshabilitamos el título por defecto
+        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //obligamos al usuario a pulsar los botones para cerrarlo
+        customDialog.setCancelable(false);
+        //establecemos el contenido de nuestro dialog
+        customDialog.setContentView(R.layout.dialog_confirm);
+
+        TextView titulo = (TextView) customDialog.findViewById(R.id.titulo);
+        titulo.setText("Salir");
+
+        TextView contenido = (TextView) customDialog.findViewById(R.id.contenido);
+        contenido.setText("¿Realmente deseas salir de la aplicacion?");
+
+        customDialog.findViewById(R.id.aceptar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)            {
+                closeApp = true;
+                customDialog.dismiss();
+                onBackPressed();
+            }
+        });
+
+        customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)            {
+                closeApp = false;
+                customDialog.dismiss();
+            }
+        });
+        customDialog.show();
+        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(this).inflate(R.layout.alert_confirm_close_app, null);
+        view.setBackgroundColor(R.color.bg_color_alert);
+        builder.setView(view);
         builder.setTitle("Salir").setMessage("¿Realmente deseas salir de la aplicacion?");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -242,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }).setNegativeButton("Cancelar", null)
                 .create()
-                .show();
+                .show();*/
     }
 
     private void deleteSelectedProducts() {

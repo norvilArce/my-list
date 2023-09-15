@@ -29,4 +29,9 @@
     <color name="borde_edit_text">#E37F02</color>
     <color name="status_bar">#F6E139</color>
     <color name="text_title">#F0F0F0</color>
+
+    <color name="button_normal">#F4E23C</color>
+    <color name="button_pressed">#E37F02</color>
+    <color name="dialog_divider">@color/borde_edit_text</color>
+
 </resources>
