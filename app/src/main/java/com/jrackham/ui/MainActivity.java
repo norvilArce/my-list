@@ -1,15 +1,23 @@
 package com.jrackham.ui;
 
+import static com.jrackham.app.MyApplication.NUMBER_OF_PRODUCTS;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.addProductToCategoryById;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
 import static com.jrackham.persistence.realm.service.ProductCRUD.addProductRealm;
+import static com.jrackham.persistence.realm.service.ProductCRUD.deleteProductsRealm;
 import static com.jrackham.persistence.realm.service.ProductCRUD.getAllProductRealmsSortByPriority;
-import static com.jrackham.persistence.realm.service.ProductCRUD.updateProductsPriorities;
+import static com.jrackham.persistence.realm.service.ProductCRUD.getNFirstProductRealmsSortByPriority;
+import static com.jrackham.persistence.realm.service.ProductCRUD.updatePrioritiesBeforeToAddProduct;
+import static com.jrackham.persistence.realm.service.ProductCRUD.updatePrioritiesBeforeToDeleteProducts;
 import static com.jrackham.util.Util.closeKeyboard;
+import static com.jrackham.util.Validation.areCheckBoxesSelectables;
+import static com.jrackham.util.Validation.areCheckBoxesSelected;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +54,7 @@ import io.realm.RealmList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "MainActivity";
     Mapper mapper = new MapperImpl();
+    SharedPreferences preferences;
     //ui
     ActivityMainBinding binding;
     Button mbtnAddProduct, mbtnNewProduct, mbtnProductValidate, mbtnDone;
@@ -60,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Realm realm;
     List<CategoryRealm> categories = new RealmList<>();
     private List<ProductRealm> productRealms = new RealmList<>();
-
 
     //list
     private List<Product> products = new ArrayList<>();
@@ -78,18 +86,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        preferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
+
         categories = getAllCategories();
+        //productRealms = getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS); todo
         productRealms = getAllProductRealmsSortByPriority();
         products = mapper.productsRealmToProducts(productRealms);
         setupView();
 
         layoutManager = new LinearLayoutManager(this);
-        adapter = new ProductAdapter(this, R.layout.items_products, products, new OnProductClickDeleteListener() {
-            @Override
-            public void onDeleteProduct(Product product, int position) {
-                Toast.makeText(MainActivity.this, "Este producto se borrara-> " + product.getName() + ", priority: " + product.getPriority(), Toast.LENGTH_LONG).show();
-            }
-        }, new OnProductLongClickListener() {
+        adapter = new ProductAdapter(this, R.layout.items_products, products, new OnProductLongClickListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public boolean onProductLongClick(View view, Product product, int position) {
@@ -104,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public boolean onProductClick(CheckBox checkBox, Product product, int position) {
-                if (areCheckBoxesSelectables()) {
+                if (areCheckBoxesSelectables(products)) {
                     product.setSelected(!checkBox.isChecked());
                     adapter.setProducts(products);
                     adapter.notifyDataSetChanged();
@@ -121,38 +127,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mcbAllProductSelected.setOnCheckedChangeListener(this);
 
         updateViews();
-    }
-
-    private boolean areCheckBoxesSelectables() {
-        boolean selectable = false;
-        List<Boolean> collect = products.stream().map(Product::isSelectable).collect(Collectors.toList());
-        for (boolean b : collect) {
-            if (b) {
-                selectable = true;
-                break;
-            }
-        }
-        return selectable;
-    }
-    private boolean areCheckBoxesSelected() {
-        boolean selected = false;
-        List<Boolean> collect = products.stream().map(Product::isSelected).collect(Collectors.toList());
-        for (boolean b : collect) {
-            if (b) {
-                selected = true;
-                break;
-            }
-        }
-        return selected;
+        //setNumberOfProducts(15); todo
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         categories = getAllCategories();
+        //products = mapper.productsRealmToProducts(getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS)); todo
         products = mapper.productsRealmToProducts(getAllProductRealmsSortByPriority());
         setupView();
         updateViews();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void updateProductsList() {
+        //products = mapper.productsRealmToProducts(getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS)); todo
+        products = mapper.productsRealmToProducts(getAllProductRealmsSortByPriority());
+        adapter.setProducts(products);
+        adapter.notifyDataSetChanged();
+        mllProductOptions.setVisibility(View.INVISIBLE);
     }
 
     @SuppressLint("SetTextI18n")
@@ -160,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         metPriceProduct.setText("");
         metNameProduct.setText("");
 
-        mtvTotalProducts.setText(products.size() + " productos: ");
+        mtvTotalProducts.setText(products.size() + " mas importantes");
         double totalAmount = productRealms.stream().mapToDouble(ProductRealm::getPrice).sum();
         double amountRound = Math.round(totalAmount * 100.0) / 100.0;
         mtvTotalAmount.setText("S/. " + amountRound);
@@ -188,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mspnCategory.setAdapter(new ArrayAdapter<>(this, R.layout.items_spinner_categories, categoryNames));
     }
 
+    @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged"})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -200,43 +195,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.ibDeleteProduct:
                 deleteSelectedProducts();
+                setNewPriorities();
+                updateProductsList();
+                updateViews();
                 break;
         }
+    }
+
+    private void setNewPriorities() {
+        updatePrioritiesBeforeToDeleteProducts();
+        Log.e(TAG, "setNewPriorities: " + products);
     }
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBackPressed() {
-        if (mllProductOptions.getVisibility()==View.VISIBLE){
-            if (areCheckBoxesSelected()) {
+        if (mllProductOptions.getVisibility() == View.VISIBLE) {
+            if (areCheckBoxesSelected(products)) {
                 mcbAllProductSelected.setChecked(false);
                 mcbAllProductSelected.setSelected(false);
                 products.forEach(p -> p.setSelected(false));
                 adapter.setProducts(products);
-            } else{
+            } else {
                 mllProductOptions.setVisibility(View.GONE);
                 products.forEach(p -> p.setSelectable(false));
                 adapter.setProducts(products);
             }
             adapter.notifyDataSetChanged();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
+
     private void deleteSelectedProducts() {
         List<Product> productsThatWillDelete = products.stream().filter(Product::isSelected).collect(Collectors.toList());
-        Toast.makeText(this, "Se eliminaran los productos: " + productsThatWillDelete.stream().map(Product::getName).collect(Collectors.toList()), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Se eliminaran los productos: " + productsThatWillDelete.stream().map(Product::getId).collect(Collectors.toList()), Toast.LENGTH_LONG).show();
+        deleteProductsRealm(productsThatWillDelete.stream().map(Product::getId).collect(Collectors.toList()));
     }
 
     private Product createProduct() {
 
         String name = metNameProduct.getText().toString().trim();
         String price = metPriceProduct.getText().toString().trim();
-        Log.e(TAG, "name: -> " + name);
-        Log.e(TAG, "price: -> " + price);
 
-        int selectedItemPosition = mspnCategory.getSelectedItemPosition(); //FIXME buscar por nombre
-        Log.e(TAG, "selectedItemPosition: -> " + selectedItemPosition);
+        int selectedItemPosition = mspnCategory.getSelectedItemPosition();
         CategoryRealm category = categories.get(selectedItemPosition);
 
         if (name.equalsIgnoreCase("") || price.equalsIgnoreCase("")) return null;
@@ -251,15 +253,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        //saludo
-        Log.e(TAG, "\n\n");
-        Log.e(TAG, "Vamos a registar lo que necesitas comprar...");
-        Log.e(TAG, "... y ordenar los productos segun su prioridad");
-        Log.e(TAG, "...");
-        Log.e(TAG, "...");
-        Log.e(TAG, "Ikuzo!!");
-        Log.e(TAG, "\n\n");
-
         //validar que hay mas de un elemento en la lista sino solo se agrega el producto a la lista
         if (products.size() < 1) {
             product.setPriority(0);
@@ -268,26 +261,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             addProductToCategoryById(productRealm);
             updateInitLimits();
         } else {
-            Log.d(TAG, "abriendo alert dialog... ");
             showAlertDialogValidatePriority(product);
         }
         adapter.notifyDataSetChanged();
-        Log.d(TAG, products.toString());
     }
 
     private void sortProductInList(Product product) {
-
-        Log.d(TAG, "leftLimit final: " + leftLimit);
-        Log.d(TAG, "rightLimit final: " + rightLimit);
-        Log.d(TAG, "media final: " + media);
-
-        updateProductsPriorities(leftLimit);//actualiza la prioridad de los productos posteriores al ingresado
+        //actualiza la prioridad de los productos posteriores al ingresado
+        updatePrioritiesBeforeToAddProduct(leftLimit);
 
         product.setPriority(leftLimit);
         ProductRealm productRealm = mapper.productToProductRealm(product);
 
-        addProductRealm(productRealm);//agrega el producto a la db
-        Log.e(TAG, "esta es la lista saliendo despues de ordenar:\n" + products);
+        //agrega el producto a la db
+        addProductRealm(productRealm);
     }
 
     private void showAlertDialogValidatePriority(Product product) {
@@ -301,10 +288,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         builder.setView(dialogView);
         builder.setTitle("Validación").setMessage("¿Que producto es mas importante?");
 
-        Log.d(TAG, "Ok, ordenemos el nuevo producto por orden de prioridad");
-        //repetir hasta que no hayan elementos para comparar
-        //mostrar elemento central y comparar con el producto ingresado
-        Log.e(TAG, "prducto: " + product.getName());
         leftLimit = 0;
         rightLimit = products.size() - 1;
         updateButtons(product);
@@ -335,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 sortProductInList(product);
                 updateInitLimits();
                 dialog.dismiss();
-                products = mapper.productsRealmToProducts(getAllProductRealmsSortByPriority());
+                updateProductsList();
                 updateViews();
                 closeKeyboard(MainActivity.this);
             }
@@ -345,9 +328,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void updateInitLimits() {
         leftLimit = 0;
         rightLimit = products.size() - 1;
-        Log.e(TAG, "leftLimit init: " + leftLimit);
-        Log.e(TAG, "rightLimit init: " + rightLimit);
-        Log.e(TAG, "media init: " + media);
     }
 
     private boolean validateLimits() {
@@ -362,12 +342,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void updateButtons(Product product) {
         media = (int) Math.floor((leftLimit + rightLimit) / 2.0);
-        Log.e(TAG, "leftLimit: " + leftLimit);
-        Log.e(TAG, "rightLimit: " + rightLimit);
-        Log.e(TAG, "media: " + media);
         if (media >= 0) {
             mbtnNewProduct.setText(product.getName());
-            mbtnProductValidate.setText(products.get(media).getName());//todo validar si es products o productRealms
+            mbtnProductValidate.setText(products.get(media).getName());
         }
     }
 
@@ -381,5 +358,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         adapter.setProducts(products);
         adapter.notifyDataSetChanged();
+    }
+
+    @SuppressLint("ApplySharedPref")
+    private void setNumberOfProducts(int n) {
+        int numberOfProductsInDB = getAllProductRealmsSortByPriority().size();
+        if (n > numberOfProductsInDB) n = numberOfProductsInDB;
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("numberOfProducts", n);
+        editor.commit();//no continua hasta que se cargue
+        //editor.apply();//continua sin terminar de cargar
     }
 }

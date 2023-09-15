@@ -37,4 +37,14 @@ public class MapperImpl implements Mapper {
         }
         return products;
     }
+
+    @Override
+    public List<ProductRealm> productsToProductsRealm(List<Product> products) {
+        List<ProductRealm> productsRealm = new ArrayList<>();
+        for (Product product : products) {
+            ProductRealm productRealm = productToProductRealm(product);
+            productsRealm.add(productRealm);
+        }
+        return productsRealm;
+    }
 }

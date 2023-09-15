@@ -25,18 +25,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     private Context context;
     private int layout;
     private List<Product> products;
-    private OnProductClickDeleteListener deleteListener;
     private OnProductLongClickListener longClickListener;
     private OnProductClickListener clickListener;
 
     public ProductAdapter(Context context, int layout, List<Product> products,
-                          OnProductClickDeleteListener deleteListener,
                           OnProductLongClickListener longClickListener,
                           OnProductClickListener clickListener) {
         this.context = context;
         this.layout = layout;
         this.products = products;
-        this.deleteListener = deleteListener;
         this.longClickListener = longClickListener;
         this.clickListener = clickListener;
     }
@@ -55,7 +52,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(products.get(position), deleteListener, longClickListener, clickListener);
+        holder.bind(products.get(position),  longClickListener, clickListener);
     }
 
     @Override
@@ -82,7 +79,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
         @SuppressLint("SetTextI18n")
         public void bind(final Product product,
-                         final OnProductClickDeleteListener deleteListener,
                          final OnProductLongClickListener longClickListener,
                          OnProductClickListener clickListener) {
 
@@ -109,14 +105,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
                     longClickListener.onProductLongClick(mrlCheck, product, getAdapterPosition());
                     return true;
-                }
-            });
-
-            //cuando selecciona el check
-            mrlCheck.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    deleteListener.onDeleteProduct(product, getAdapterPosition());
                 }
             });
         }

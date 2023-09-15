@@ -9,4 +9,5 @@ public interface Mapper {
     ProductRealm productToProductRealm(Product product);
     Product productRealmToProduct(ProductRealm productRealm);
     List<Product> productsRealmToProducts(List<ProductRealm> productRealms);
+    List<ProductRealm> productsToProductsRealm(List<Product> product);
 }
