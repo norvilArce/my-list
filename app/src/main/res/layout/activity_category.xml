@@ -8,7 +8,7 @@
     tools:context=".ui.CategoryActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/tbCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/status_bar"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
         app:navigationIcon="?attr/homeAsUpIndicator"
-        app:titleTextColor="@color/texto" />
+        app:titleTextColor="@color/texto_boton_agregar" />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -40,7 +40,7 @@
         android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/tbCategory"
         app:layout_constraintWidth_percent=".95">
 
         <EditText
@@ -62,6 +62,7 @@
             android:layout_weight="1"
             android:background="@drawable/btn_bg_product"
             android:text="Agregar"
+            android:textColor="@color/texto_boton_agregar"
             android:textAllCaps="false" />
 
     </LinearLayout>

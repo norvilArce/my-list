@@ -32,7 +32,7 @@ public class ProductCRUD {
         return realm.where(ProductRealm.class).equalTo("id", id).findFirst();
     }
 
-    public static void updateProductRealmById(final ProductRealm product) {
+    public static void updateProductRealm(final ProductRealm product) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         ProductRealm currentProductRealm = realm.where(ProductRealm.class).equalTo("id", product.getId()).findFirst();
@@ -41,6 +41,11 @@ public class ProductCRUD {
             currentProductRealm.setPrice(product.getPrice());
             currentProductRealm.setPriority(product.getPriority());
             realm.insertOrUpdate(currentProductRealm);
+            CategoryRealm categoryRealm = realm.where(CategoryRealm.class).equalTo("id", currentProductRealm.getCategoryId()).findFirst();
+            if (categoryRealm != null) {
+                categoryRealm.getProducts().remove(product);
+                categoryRealm.getProducts().add(currentProductRealm);
+            }
         }
         realm.commitTransaction();
     }

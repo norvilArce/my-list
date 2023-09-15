@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,8 +29,8 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
 
     ActivityCategoryBinding binding;
     Button mbtnAddCategory;
-
     EditText metNameCategory;
+    Toolbar mtbCategory;
 
     private List<CategoryRealm> categories = new RealmList<>();
 
@@ -61,6 +62,10 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         mbtnAddCategory = binding.btnAddCategory;
         metNameCategory = binding.etNameCategory;
         mrvCategories = binding.rvCategories;
+        mtbCategory = binding.tbCategory;
+
+        mtbCategory.setTitle("Categories");
+        setSupportActionBar(mtbCategory);
     }
 
     @Override
@@ -72,6 +77,12 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
                 metNameCategory.setText("");
                 closeKeyboard(CategoryActivity.this);
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     private CategoryRealm createCategory() {

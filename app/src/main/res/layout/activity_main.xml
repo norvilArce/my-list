@@ -205,7 +205,8 @@
             android:layout_weight="1"
             android:autofillHints="password"
             android:hint="Seleccionar todo"
-            android:textColorHint="@color/accentColor" />
+            android:buttonTint="@color/borde_edit_text"
+            android:textColorHint="@color/texto_boton_agregar" />
 
         <ImageButton
             android:id="@+id/ibDeleteProduct"
