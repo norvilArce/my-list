@@ -1,12 +1,10 @@
 package com.jrackham.ui;
 
-import static com.jrackham.app.MyApplication.NUMBER_OF_PRODUCTS;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.addProductToCategoryById;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
 import static com.jrackham.persistence.realm.service.ProductCRUD.addProductRealm;
 import static com.jrackham.persistence.realm.service.ProductCRUD.deleteProductsRealm;
 import static com.jrackham.persistence.realm.service.ProductCRUD.getAllProductRealmsSortByPriority;
-import static com.jrackham.persistence.realm.service.ProductCRUD.getNFirstProductRealmsSortByPriority;
 import static com.jrackham.persistence.realm.service.ProductCRUD.updatePrioritiesBeforeToAddProduct;
 import static com.jrackham.persistence.realm.service.ProductCRUD.updatePrioritiesBeforeToDeleteProducts;
 import static com.jrackham.util.Util.closeKeyboard;
@@ -16,6 +14,7 @@ import static com.jrackham.util.Validation.areCheckBoxesSelected;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int leftLimit = 0;
     int rightLimit = 0;
     int media = 0;
+    boolean closeApp = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,21 +210,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBackPressed() {
-        if (mllProductOptions.getVisibility() == View.VISIBLE) {
-            if (areCheckBoxesSelected(products)) {
-                mcbAllProductSelected.setChecked(false);
-                mcbAllProductSelected.setSelected(false);
-                products.forEach(p -> p.setSelected(false));
-                adapter.setProducts(products);
+        if (!closeApp) {
+            if (mllProductOptions.getVisibility() == View.VISIBLE) {
+                if (areCheckBoxesSelected(products)) {
+                    mcbAllProductSelected.setChecked(false);
+                    mcbAllProductSelected.setSelected(false);
+                    products.forEach(p -> p.setSelected(false));
+                    adapter.setProducts(products);
+                } else {
+                    mllProductOptions.setVisibility(View.GONE);
+                    products.forEach(p -> p.setSelectable(false));
+                    adapter.setProducts(products);
+                }
+                adapter.notifyDataSetChanged();
             } else {
-                mllProductOptions.setVisibility(View.GONE);
-                products.forEach(p -> p.setSelectable(false));
-                adapter.setProducts(products);
+                showAlertDialogCloseAppConfirmation();
             }
-            adapter.notifyDataSetChanged();
-        } else {
+        }else {
             super.onBackPressed();
         }
+    }
+
+    private void showAlertDialogCloseAppConfirmation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Salir").setMessage("¿Realmente deseas salir de la aplicacion?");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        closeApp = true;
+                        onBackPressed();
+                    }
+                }).setNegativeButton("Cancelar", null)
+                .create()
+                .show();
     }
 
     private void deleteSelectedProducts() {
