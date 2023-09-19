@@ -32,6 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int rightLimit = 0;
     int media = 0;
     boolean closeApp = false;
+    boolean deleteProducts = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,12 +197,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 goToCategoryActivity();
                 break;
             case R.id.ibDeleteProduct:
+                validateDelete();
+                break;
+        }
+    }
+
+    private void validateDelete() {
+        List<Product> productsToDelete = getProductsToDelete();
+        List<String> productNames = productsToDelete.stream().map(Product::getName).collect(Collectors.toList());
+        Dialog dialog = getDialogConfirm("Eliminar ", "¿Confirmas que deseas eliminar los productos: " + productNames + "?");
+
+        dialog.findViewById(R.id.aceptar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 deleteSelectedProducts();
                 setNewPriorities();
                 updateProductsList();
                 updateViews();
-                break;
-        }
+                dialog.dismiss();
+            }
+        });
+        dialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    @NonNull
+    private List<Product> getProductsToDelete() {
+        List<Product> productsThatWillDelete = products.stream().filter(Product::isSelected).collect(Collectors.toList());
+        return productsThatWillDelete;
     }
 
     private void setNewPriorities() {
@@ -227,15 +256,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 showAlertDialogCloseAppConfirmation();
             }
-        }else {
+        } else {
             super.onBackPressed();
         }
     }
 
     @SuppressLint("ResourceAsColor")
     private void showAlertDialogCloseAppConfirmation() {
+        Dialog dialog = getDialogConfirm("Salir", "¿Realmente deseas salir de la aplicacion?");
+
+        dialog.findViewById(R.id.aceptar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeApp = true;
+                dialog.dismiss();
+                onBackPressed();
+            }
+        });
+        dialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeApp = false;
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    @NonNull
+    private Dialog getDialogConfirm(String title, String text) {
         // con este tema personalizado evitamos los bordes por defecto
-        Dialog customDialog = new Dialog(this,R.style.Theme_Dialog_Translucent);
+        Dialog customDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
         //deshabilitamos el título por defecto
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         //obligamos al usuario a pulsar los botones para cerrarlo
@@ -244,48 +295,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         customDialog.setContentView(R.layout.dialog_confirm);
 
         TextView titulo = (TextView) customDialog.findViewById(R.id.titulo);
-        titulo.setText("Salir");
+        titulo.setText(title);
 
         TextView contenido = (TextView) customDialog.findViewById(R.id.contenido);
-        contenido.setText("¿Realmente deseas salir de la aplicacion?");
-
-        customDialog.findViewById(R.id.aceptar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)            {
-                closeApp = true;
-                customDialog.dismiss();
-                onBackPressed();
-            }
-        });
-
-        customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)            {
-                closeApp = false;
-                customDialog.dismiss();
-            }
-        });
-        customDialog.show();
-        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(this).inflate(R.layout.alert_confirm_close_app, null);
-        view.setBackgroundColor(R.color.bg_color_alert);
-        builder.setView(view);
-        builder.setTitle("Salir").setMessage("¿Realmente deseas salir de la aplicacion?");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        closeApp = true;
-                        onBackPressed();
-                    }
-                }).setNegativeButton("Cancelar", null)
-                .create()
-                .show();*/
+        contenido.setText(text);
+        return customDialog;
     }
 
     private void deleteSelectedProducts() {
-        List<Product> productsThatWillDelete = products.stream().filter(Product::isSelected).collect(Collectors.toList());
-        Toast.makeText(this, "Se eliminaran los productos: " + productsThatWillDelete.stream().map(Product::getId).collect(Collectors.toList()), Toast.LENGTH_LONG).show();
-        deleteProductsRealm(productsThatWillDelete.stream().map(Product::getId).collect(Collectors.toList()));
+        Toast.makeText(this, "Se eliminaron los productos: " + getProductsToDelete().stream().map(Product::getName).collect(Collectors.toList()), Toast.LENGTH_LONG).show();
+        deleteProductsRealm(getProductsToDelete().stream().map(Product::getId).collect(Collectors.toList()));
     }
 
     private Product createProduct() {
