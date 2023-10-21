@@ -2,9 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/clRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondo_activity"
+    android:theme="@style/Theme.MaterialComponents.Light.Bridge"
     tools:context=".ui.MainActivity">
 
     <ImageView
@@ -25,19 +27,20 @@
         android:layout_height="wrap_content"
         android:background="@drawable/res_bg"
         android:elevation="15dp"
-        android:translationY="-30dp"
+        android:translationY="-45dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivHeader"
         app:layout_constraintVertical_bias="0"
-        app:layout_constraintWidth_percent=".85">
+        app:layout_constraintWidth_percent=".90">
 
         <TextView
             android:id="@+id/etTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:letterSpacing="0.000005"
             android:text="Lista de compras"
             android:textSize="34sp"
             android:textStyle="bold"
@@ -45,7 +48,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0" />
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintWidth_percent=".85" />
 
         <TextView
             android:id="@+id/etMessage"
@@ -66,7 +70,7 @@
             android:layout_width="0dp"
             android:layout_height="0.5dp"
             android:layout_marginTop="5dp"
-            android:background="@color/fondo_activity"
+            android:background="@color/texto"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias=".5"
@@ -75,81 +79,76 @@
             app:layout_constraintVertical_bias="0"
             app:layout_constraintWidth_percent=".9" />
 
-        <ImageView
-            android:id="@+id/ivCheck"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/baseline_check_24"
-            app:layout_constraintBottom_toBottomOf="@+id/etNameProdcuct"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@id/line"
-            app:layout_constraintTop_toTopOf="@+id/etNameProdcuct" />
-
-        <EditText
-            android:id="@+id/etNameProdcuct"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNameProdcuct"
+            style="@style/CustomEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="7dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/et_bg_product"
-            android:hint="Nombre"
-            android:paddingLeft="6dp"
-            android:paddingVertical="3dp"
-            android:textSize="16sp"
-            android:textColor="@color/texto"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/ivCheck"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/line"
-            app:layout_constraintVertical_bias="0"
-            app:layout_constraintWidth_percent=".75" />
+            app:layout_constraintWidth_percent=".82"
+            app:startIconDrawable="@drawable/baseline_check_24">
 
-        <ImageView
-            android:id="@+id/ivMoney"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/baseline_attach_money_24"
-            app:layout_constraintBottom_toBottomOf="@+id/etPriceProdcuct"
-            app:layout_constraintStart_toStartOf="@id/ivCheck"
-            app:layout_constraintTop_toTopOf="@+id/etPriceProdcuct" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNameProdcuct"
+                style="@style/CustomTextBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre"
+                android:inputType="textAutoComplete"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etPriceProdcuct"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPriceProdcuct"
+            style="@style/CustomEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="7dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/et_bg_product"
-            android:hint="Precio"
-            android:inputType="numberDecimal"
-            android:paddingLeft="6dp"
-            android:paddingVertical="3dp"
-            android:textSize="16sp"
-            android:textColor="@color/texto"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/ivMoney"
-            app:layout_constraintTop_toBottomOf="@id/etNameProdcuct"
+            app:layout_constraintStart_toStartOf="@+id/tilNameProdcuct"
+            app:layout_constraintTop_toBottomOf="@id/tilNameProdcuct"
             app:layout_constraintVertical_bias="0"
-            app:layout_constraintWidth_percent=".20" />
+            app:layout_constraintWidth_percent=".35"
+            app:startIconDrawable="@drawable/baseline_attach_money_24">
 
-        <Spinner
-            android:id="@+id/spnCategory"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPriceProdcuct"
+                style="@style/CustomTextBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio"
+                android:inputType="numberDecimal"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCategory"
+            style="@style/CustomSpinner"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginLeft="10dp"
-            android:spinnerMode="dialog"
-            android:backgroundTint="@color/borde_edit_text"
-            app:layout_constraintBottom_toBottomOf="@+id/etPriceProdcuct"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:hint="Category"
+            app:layout_constraintBottom_toBottomOf="@+id/tilPriceProdcuct"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/etPriceProdcuct"
-            app:layout_constraintTop_toTopOf="@+id/etPriceProdcuct"
-            app:layout_constraintWidth_percent=".45" />
+            app:layout_constraintStart_toEndOf="@id/tilPriceProdcuct"
+            app:layout_constraintTop_toTopOf="@+id/tilPriceProdcuct"
+            app:layout_constraintWidth_percent=".44">
+
+            <AutoCompleteTextView
+                android:id="@+id/actvCategory"
+                style="@style/CustomSpinner.List"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:inputType="none"
+                android:lines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <ImageButton
             android:id="@+id/imbtnAddCategory"
@@ -158,11 +157,11 @@
             android:layout_marginLeft="3dp"
             android:background="@null"
             android:src="@android:drawable/ic_input_add"
-            app:layout_constraintBottom_toBottomOf="@+id/etPriceProdcuct"
+            app:layout_constraintBottom_toBottomOf="@+id/tilPriceProdcuct"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/spnCategory"
-            app:layout_constraintTop_toTopOf="@+id/etPriceProdcuct" />
+            app:layout_constraintStart_toEndOf="@id/tilCategory"
+            app:layout_constraintTop_toTopOf="@+id/tilPriceProdcuct" />
 
         <Button
             android:id="@+id/btnAddProduct"
@@ -174,12 +173,12 @@
             android:text="Agregar"
             android:textAllCaps="false"
             android:textColor="@color/texto_boton_agregar"
-            android:textStyle="bold"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etPriceProdcuct"
+            app:layout_constraintTop_toBottomOf="@+id/tilPriceProdcuct"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintWidth_percent=".8" />
 
@@ -190,9 +189,9 @@
         android:id="@+id/llProductOptions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-35dp"
         android:orientation="horizontal"
         android:visibility="invisible"
-        android:layout_marginTop="-25dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintlayout"
@@ -204,8 +203,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:autofillHints="password"
-            android:hint="Seleccionar todo"
             android:buttonTint="@color/borde_edit_text"
+            android:hint="Seleccionar todo"
             android:textColorHint="@color/texto_boton_agregar" />
 
         <ImageButton
@@ -245,11 +244,11 @@
         android:id="@+id/tvTotalAmount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:paddingHorizontal="7dp"
         android:text="Monto total: "
         android:textAlignment="textEnd"
         android:textColor="@color/texto"
-        android:layout_marginBottom="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/rvProducts"
         app:layout_constraintWidth_percent=".4" />

@@ -21,4 +21,63 @@
     <style name="Theme_Dialog_Translucent" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>
+
+    <style name="CustomSpinner" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu">
+        <item name="android:textColor">@color/texto</item>
+        <item name="colorControlNormal">@color/borde_edit_texts</item>
+        <item name="colorControlActivated">@color/ic_launcher_background</item>
+        <item name="colorContainer">@color/borde_edit_texts</item>
+        <item name="android:backgroundTint">@color/fondo_activity</item>
+        <item name="backgroundTint">@color/fondo_activity</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:layout_marginTop">-10dp</item>
+        <item name="background">@color/fondo_activity</item>
+        <item name="android:foregroundTint">@color/borde_edit_text</item>
+
+        <item name="endIconTint">@color/text_field</item>
+        <item name="boxStrokeColor">@color/text_field</item>
+        <item name="hintTextColor">@color/text_field</item>
+        <item name="android:textColorHint">@color/text_field</item>
+    </style>
+
+    <style name="CustomSpinner.List" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textColorHint">@color/texto</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:backgroundTint">@color/fondo_activity</item>
+    </style>
+
+    <style name="CustomEditText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="android:colorControlNormal">@color/accentColor</item>
+        <item name="android:colorControlActivated">@color/accentColor</item>
+        <item name="android:colorControlHighlight">@color/accentColor</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:backgroundTint">@color/borde_edit_texts</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="startIconScaleType">centerInside</item>
+        <item name="cursorColor">@color/borde_edit_texts</item>
+
+        <item name="startIconTint">@color/text_field</item>
+        <item name="boxStrokeColor">@color/text_field</item>
+        <item name="hintTextColor">@color/text_field</item>
+        <item name="android:textColorHint">@color/text_field</item>
+    </style>
+
+    <style name="CustomTextBox">
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.009375</item>
+        <item name="android:textColor">@color/texto</item>
+        <item name="android:backgroundTint">@color/text_field</item>
+        <item name="background">@color/text_field</item>
+        <item name="backgroundTint">@color/text_field</item>
+
+    </style>
 </resources>

@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,15 +29,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     private List<Product> products;
     private OnProductLongClickListener longClickListener;
     private OnProductClickListener clickListener;
+    private OnProductClickEditListener clickEditListener;
 
     public ProductAdapter(Context context, int layout, List<Product> products,
                           OnProductLongClickListener longClickListener,
-                          OnProductClickListener clickListener) {
+                          OnProductClickListener clickListener,
+                          OnProductClickEditListener clickEditListener) {
         this.context = context;
         this.layout = layout;
         this.products = products;
         this.longClickListener = longClickListener;
         this.clickListener = clickListener;
+        this.clickEditListener = clickEditListener;
     }
 
     public void setProducts(List<Product> products) {
@@ -52,7 +57,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(products.get(position),  longClickListener, clickListener);
+        holder.bind(products.get(position), longClickListener, clickListener
+                , clickEditListener );
     }
 
     @Override
@@ -67,6 +73,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         private TextView mtvCategory;
         private RelativeLayout mrlCheck;
         private CheckBox mcbProductSelected;
+        private ImageButton mibEditProduct;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -75,12 +82,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             mtvCategory = itemView.findViewById(R.id.tvCategory);
             mrlCheck = itemView.findViewById(R.id.rlCheck);
             mcbProductSelected = itemView.findViewById(R.id.cbAllProductSelected);
+            mibEditProduct = itemView.findViewById(R.id.ibEditProduct);
         }
 
         @SuppressLint("SetTextI18n")
         public void bind(final Product product,
                          final OnProductLongClickListener longClickListener,
-                         OnProductClickListener clickListener) {
+                         final OnProductClickListener clickListener,
+                         final OnProductClickEditListener clickEditListener) {
 
             this.mtvName.setText(product.getName());
             this.mtvPrice.setText("S/." + product.getPrice().toString());
@@ -88,26 +97,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             this.mtvCategory.setText(category.getName());
 
             this.mrlCheck.setVisibility((product.isSelectable()) ? View.VISIBLE : View.GONE);
+            this.mibEditProduct.setVisibility((product.isSelected()) ? View.VISIBLE : View.GONE);
             this.mcbProductSelected.setChecked(product.isSelected());
 
             //cuando se da click al elemento
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    clickListener.onProductClick(mcbProductSelected, product, getAdapterPosition());
-                }
-            });
+            itemView.setOnClickListener(v -> clickListener.onProductClick(mcbProductSelected, product, getAdapterPosition()));
 
             //cuando se mantiene presionado
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
+            itemView.setOnLongClickListener(v -> {
+                longClickListener.onProductLongClick(mrlCheck, product, getAdapterPosition());
+                return true;
+            });
 
-                    longClickListener.onProductLongClick(mrlCheck, product, getAdapterPosition());
-                    return true;
+            //cuando se da click al boton editar
+            mibEditProduct.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickEditListener.onEditProduct(product, getAdapterPosition());
                 }
             });
         }
     }
 }
-

@@ -34,4 +34,6 @@
     <color name="button_pressed">#E37F02</color>
     <color name="dialog_divider">@color/borde_edit_text</color>
 
+    <color name="item_selected">#FF9400</color>
+    <color name="borde_edit_texts">#C18226</color>
 </resources>

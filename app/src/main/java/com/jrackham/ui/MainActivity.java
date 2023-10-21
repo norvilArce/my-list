@@ -2,12 +2,14 @@ package com.jrackham.ui;
 
 import static com.jrackham.persistence.realm.service.CategoryCRUD.addProductToCategoryById;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
+import static com.jrackham.persistence.realm.service.CategoryCRUD.getCategoryById;
 import static com.jrackham.persistence.realm.service.ProductCRUD.addProductRealm;
 import static com.jrackham.persistence.realm.service.ProductCRUD.deleteProductsRealm;
 import static com.jrackham.persistence.realm.service.ProductCRUD.getAllProductRealmsSortByPriority;
 import static com.jrackham.persistence.realm.service.ProductCRUD.updatePrioritiesBeforeToAddProduct;
 import static com.jrackham.persistence.realm.service.ProductCRUD.updatePrioritiesBeforeToDeleteProducts;
-import static com.jrackham.util.Util.closeKeyboard;
+import static com.jrackham.util.UtilKeyboard.clearFocusAndCloseKB;
+import static com.jrackham.util.UtilKeyboard.hideKeyBoard;
 import static com.jrackham.util.Validation.areCheckBoxesSelectables;
 import static com.jrackham.util.Validation.areCheckBoxesSelected;
 
@@ -19,33 +21,38 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.jrackham.R;
 import com.jrackham.databinding.ActivityMainBinding;
 import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 import com.jrackham.persistence.realm.model.ProductRealm;
+import com.jrackham.util.DialogBuilder;
+import com.jrackham.util.StringUtil;
 import com.jrackham.util.mapper.Mapper;
 import com.jrackham.util.mapper.MapperImpl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,16 +66,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //ui
     ActivityMainBinding binding;
     Button mbtnAddProduct, mbtnNewProduct, mbtnProductValidate, mbtnDone;
-    EditText metNameProduct, metPriceProduct;
-    Spinner mspnCategory;
+    TextInputEditText metNameProduct, metPriceProduct;
+    TextInputLayout mtilCategory;
     TextView mtvTotalProducts, mtvTotalAmount;
     ImageButton mimbtnAddCategory, mibDeleteProduct;
     LinearLayout mllProductOptions;
     CheckBox mcbAllProductSelected;
+    AutoCompleteTextView mactvCategory;
+    ConstraintLayout mclRoot;
 
     //persistencia
     private Realm realm;
     List<CategoryRealm> categories = new RealmList<>();
+    HashMap<String, Integer> categoryMaps = new HashMap<String, Integer>();
     private List<ProductRealm> productRealms = new RealmList<>();
 
     //list
@@ -81,8 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int rightLimit = 0;
     int media = 0;
     boolean closeApp = false;
-    boolean deleteProducts = false;
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         preferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
 
         categories = getAllCategories();
-        //productRealms = getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS); todo
+        //productRealms = getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS); todo implementar luego
         productRealms = getAllProductRealmsSortByPriority();
         products = mapper.productsRealmToProducts(productRealms);
         setupView();
@@ -104,22 +114,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public boolean onProductLongClick(View view, Product product, int position) {
                 mllProductOptions.setVisibility(View.VISIBLE);
                 products.forEach(p -> p.setSelectable(true));
+
                 products.get(position).setSelected(true);
                 adapter.setProducts(products);
+
                 adapter.notifyDataSetChanged();
                 return true;
             }
-        }, new OnProductClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public boolean onProductClick(CheckBox checkBox, Product product, int position) {
-                if (areCheckBoxesSelectables(products)) {
-                    product.setSelected(!checkBox.isChecked());
-                    adapter.setProducts(products);
-                    adapter.notifyDataSetChanged();
-                }
-                return true;
+        }, (checkBox, product, position) -> {
+            if (areCheckBoxesSelectables(products)) {
+                product.setSelected(!checkBox.isChecked());
+                adapter.setProducts(products);
+                adapter.notifyDataSetChanged();
+                //Toast.makeText(MainActivity.this, "p-> " + product.getName(), Toast.LENGTH_SHORT).show();
             }
+            return true;
+        }, (product, position) -> {
+            showAlertDialogEditConfirmation(product);
         });
         mrvProducts.setLayoutManager(layoutManager);
         mrvProducts.setAdapter(adapter);
@@ -131,6 +142,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         updateViews();
         //setNumberOfProducts(15); todo
+    }
+
+    private void showAlertDialogEditConfirmation(Product product) {
+        Dialog dialog = DialogBuilder.getDialogConfirm(MainActivity.this, "Editar", "Seguro que quieres editar " + product.getName());
+
+        dialog.findViewById(R.id.aceptar).setOnClickListener(view -> {
+            dialog.dismiss();
+            //onBackPressed();
+            //onBackPressed();
+            Toast.makeText(MainActivity.this, "a ver trata de editar " + product.getName(), Toast.LENGTH_SHORT).show();
+        });
+        dialog.findViewById(R.id.cancelar).setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 
     @Override
@@ -157,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         metPriceProduct.setText("");
         metNameProduct.setText("");
 
-        mtvTotalProducts.setText(products.size() + " mas importantes");
+        mtvTotalProducts.setText(products.size() + " productos");
         double totalAmount = productRealms.stream().mapToDouble(ProductRealm::getPrice).sum();
         double amountRound = Math.round(totalAmount * 100.0) / 100.0;
         mtvTotalAmount.setText("S/. " + amountRound);
@@ -174,15 +200,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mrvProducts = binding.rvProducts;
         metNameProduct = binding.etNameProdcuct;
         metPriceProduct = binding.etPriceProdcuct;
-        mspnCategory = binding.spnCategory;
+        mtilCategory = binding.tilCategory;
         mimbtnAddCategory = binding.imbtnAddCategory;
         mtvTotalProducts = binding.tvTotalProducts;
         mtvTotalAmount = binding.tvTotalAmount;
         mibDeleteProduct = binding.ibDeleteProduct;
         mllProductOptions = binding.llProductOptions;
         mcbAllProductSelected = binding.cbAllProductSelected;
+        mactvCategory = binding.actvCategory;
+        mclRoot = binding.clRoot;
         List<String> categoryNames = categories.stream().map(CategoryRealm::getName).collect(Collectors.toList());
-        mspnCategory.setAdapter(new ArrayAdapter<>(this, R.layout.items_spinner_categories, categoryNames));
+        mactvCategory.setAdapter(new ArrayAdapter<>(this, R.layout.drop_down_item_categories, categoryNames));
     }
 
     @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged"})
@@ -202,33 +230,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void validateDelete() {
-        List<Product> productsToDelete = getProductsToDelete();
-        List<String> productNames = productsToDelete.stream().map(Product::getName).collect(Collectors.toList());
-        Dialog dialog = getDialogConfirm("Eliminar ", "¿Confirmas que deseas eliminar los productos: " + productNames + "?");
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        clearFocusAndCloseKB(this, ev);
+        return super.dispatchTouchEvent(ev);
+    }
 
-        dialog.findViewById(R.id.aceptar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteSelectedProducts();
-                setNewPriorities();
-                updateProductsList();
-                updateViews();
-                dialog.dismiss();
-            }
+    private void validateDelete() {
+        List<Product> listProductsToDelete = getProductsToDelete();
+        List<String> productNames = listProductsToDelete.stream().map(Product::getName).collect(Collectors.toList());
+        String namesProductsToDelete = StringUtil.replaceLast(productNames.toString().substring(1, productNames.toString().length() - 1), ",", "y ");
+        Dialog dialog = DialogBuilder.getDialogConfirm(this, "Eliminar ", "¿Confirmas que deseas eliminar los productos: " + namesProductsToDelete + "?");
+
+        dialog.findViewById(R.id.aceptar).setOnClickListener(view -> {
+            deleteSelectedProducts();
+            setNewPriorities();
+            updateProductsList();
+            updateViews();
+            dialog.dismiss();
         });
-        dialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
+        dialog.findViewById(R.id.cancelar).setOnClickListener(view -> dialog.dismiss());
         dialog.show();
     }
 
     @NonNull
     private List<Product> getProductsToDelete() {
-        List<Product> productsThatWillDelete = products.stream().filter(Product::isSelected).collect(Collectors.toList());
+        List<Product> productsThatWillDelete = products.stream()
+                .filter(Product::isSelected)
+                .collect(Collectors.toList());
         return productsThatWillDelete;
     }
 
@@ -263,43 +292,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @SuppressLint("ResourceAsColor")
     private void showAlertDialogCloseAppConfirmation() {
-        Dialog dialog = getDialogConfirm("Salir", "¿Realmente deseas salir de la aplicacion?");
+        Dialog dialog = DialogBuilder.getDialogConfirm(this, "Salir", "¿Realmente deseas salir de la aplicacion?");
 
-        dialog.findViewById(R.id.aceptar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                closeApp = true;
-                dialog.dismiss();
-                onBackPressed();
-            }
+        dialog.findViewById(R.id.aceptar).setOnClickListener(view -> {
+            closeApp = true;
+            dialog.dismiss();
+            onBackPressed();
         });
-        dialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                closeApp = false;
-                dialog.dismiss();
-            }
+        dialog.findViewById(R.id.cancelar).setOnClickListener(view -> {
+            closeApp = false;
+            dialog.dismiss();
         });
         dialog.show();
-    }
-
-    @NonNull
-    private Dialog getDialogConfirm(String title, String text) {
-        // con este tema personalizado evitamos los bordes por defecto
-        Dialog customDialog = new Dialog(this, R.style.Theme_Dialog_Translucent);
-        //deshabilitamos el título por defecto
-        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //obligamos al usuario a pulsar los botones para cerrarlo
-        customDialog.setCancelable(false);
-        //establecemos el contenido de nuestro dialog
-        customDialog.setContentView(R.layout.dialog_confirm);
-
-        TextView titulo = (TextView) customDialog.findViewById(R.id.titulo);
-        titulo.setText(title);
-
-        TextView contenido = (TextView) customDialog.findViewById(R.id.contenido);
-        contenido.setText(text);
-        return customDialog;
     }
 
     private void deleteSelectedProducts() {
@@ -312,8 +316,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String name = metNameProduct.getText().toString().trim();
         String price = metPriceProduct.getText().toString().trim();
 
-        int selectedItemPosition = mspnCategory.getSelectedItemPosition();
-        CategoryRealm category = categories.get(selectedItemPosition);
+        String categoryNameSelected = mactvCategory.getText().toString();
+        categoryMaps = mapper.categoryNameAndIdToMap(categories);
+        Integer categoryIdSelected = categoryMaps.get(categoryNameSelected);
+        Log.e(TAG, "categorias: \n" + categories.toString());
+        Toast.makeText(this, "posicion " + categoryIdSelected, Toast.LENGTH_SHORT).show();
+
+        CategoryRealm category = getCategoryById(categoryIdSelected);
 
         if (name.equalsIgnoreCase("") || price.equalsIgnoreCase("")) return null;
 
@@ -366,36 +375,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rightLimit = products.size() - 1;
         updateButtons(product);
 
-        mbtnNewProduct.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rightLimit = media - 1;
-                boolean validated = validateLimits();
-                if (validated) updateButtons(product);
-            }
+        mbtnNewProduct.setOnClickListener(v -> {
+            rightLimit = media - 1;
+            boolean validated = validateLimits();
+            if (validated) updateButtons(product);
         });
-        mbtnProductValidate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                leftLimit = media + 1;
-                boolean validated = validateLimits();
-                if (validated) updateButtons(product);
-            }
+        mbtnProductValidate.setOnClickListener(v -> {
+            leftLimit = media + 1;
+            boolean validated = validateLimits();
+            if (validated) updateButtons(product);
         });
         builder.setCancelable(false)
                 .create();
 
         AlertDialog dialog = builder.show();
-        mbtnDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortProductInList(product);
-                updateInitLimits();
-                dialog.dismiss();
-                updateProductsList();
-                updateViews();
-                closeKeyboard(MainActivity.this);
-            }
+        mbtnDone.setOnClickListener(v -> {
+            sortProductInList(product);
+            updateInitLimits();
+            dialog.dismiss();
+            updateProductsList();
+            updateViews();
+            hideKeyBoard(MainActivity.this, mclRoot);
         });
     }
 

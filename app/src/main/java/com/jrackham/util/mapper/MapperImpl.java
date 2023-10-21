@@ -1,9 +1,11 @@
 package com.jrackham.util.mapper;
 
 import com.jrackham.model.Product;
+import com.jrackham.persistence.realm.model.CategoryRealm;
 import com.jrackham.persistence.realm.model.ProductRealm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -46,5 +48,14 @@ public class MapperImpl implements Mapper {
             productsRealm.add(productRealm);
         }
         return productsRealm;
+    }
+
+    @Override
+    public HashMap<String,Integer> categoryNameAndIdToMap(List<CategoryRealm> categoryRealms) {
+        HashMap<String,Integer> maps = new HashMap<String,Integer>();
+        for (CategoryRealm c : categoryRealms) {
+            maps.put(c.getName(), c.getId());
+        }
+        return maps;
     }
 }

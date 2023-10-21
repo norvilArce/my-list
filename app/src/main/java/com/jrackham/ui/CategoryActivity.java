@@ -1,15 +1,14 @@
 package com.jrackham.ui;
 
-import static com.jrackham.util.Util.closeKeyboard;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.addCategory;
 import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
+import static com.jrackham.util.UtilKeyboard.closeKeyboard;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
