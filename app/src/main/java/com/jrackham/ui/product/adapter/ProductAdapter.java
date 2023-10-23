@@ -61,10 +61,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     @Override
-    public int getItemCount() {
-        return products.size();
-
-    }
+    public int getItemCount() {        return products.size();    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView mtvName;

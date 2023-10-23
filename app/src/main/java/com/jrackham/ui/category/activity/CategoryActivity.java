@@ -21,9 +21,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.jrackham.R;
 import com.jrackham.databinding.ActivityCategoryBinding;
+import com.jrackham.model.Category;
 import com.jrackham.persistence.realm.model.CategoryRealm;
+import com.jrackham.persistence.realm.service.CategoryService;
 import com.jrackham.ui.category.adapter.CategoryAdapter;
+import com.jrackham.ui.category.adapter.OnCategoryClickDeleteListener;
+import com.jrackham.ui.category.adapter.OnCategoryLongClickListener;
 import com.jrackham.util.UtilValidation;
+import com.jrackham.util.mapper.Mapper;
+import com.jrackham.util.mapper.MapperImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +38,7 @@ import io.realm.RealmList;
 
 public class CategoryActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "CategoryActivity";
+    Mapper mapper = new MapperImpl();
 
     ActivityCategoryBinding binding;
     Button mbtnAddCategory;
@@ -55,7 +62,18 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         setupView();
 
         layoutManager = new LinearLayoutManager(this);
-        adapter = new CategoryAdapter(this, R.layout.items_categories, categories, longClickListener, deleteListener);
+        adapter = new CategoryAdapter(this, R.layout.items_categories, mapper.categoriesRealmToCategories(categories), new OnCategoryLongClickListener() {
+            @Override
+            public boolean onCategoryLongClick(View view, Category category, int position) {
+                view.setVisibility(View.VISIBLE);
+                return true;
+            }
+        }, new OnCategoryClickDeleteListener() {
+            @Override
+            public void onDeleteCategory(Category category, int position) {
+                Toast.makeText(CategoryActivity.this, "¿en serio quieres elimnar: "+category.getName()+"?", Toast.LENGTH_SHORT).show();
+            }
+        });
         mrvCategories.setLayoutManager(layoutManager);
         mrvCategories.setAdapter(adapter);
 

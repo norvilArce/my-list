@@ -5,12 +5,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
+import com.jrackham.model.Category;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 
 import java.util.List;
@@ -19,12 +21,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     private Context context;
     private int layout;
-    private List<CategoryRealm> categories;
+    private List<Category> categories;
     private OnCategoryLongClickListener longClickListener;
     private OnCategoryClickDeleteListener deleteListener;
 
 
-    public CategoryAdapter(Context context, int layout, List<CategoryRealm> categories, OnCategoryLongClickListener longClickListener, OnCategoryClickDeleteListener deleteListener) {
+    public CategoryAdapter(Context context, int layout, List<Category> categories,
+                           OnCategoryLongClickListener longClickListener,
+                           OnCategoryClickDeleteListener deleteListener) {
         this.context = context;
         this.layout = layout;
         this.categories = categories;
@@ -42,7 +46,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(categories.get(position));
+        holder.bind(categories.get(position), longClickListener, deleteListener);
     }
 
     @Override
@@ -51,17 +55,28 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView name;
+        private TextView mtvName;
+        private ImageButton mibDelete;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.tvNameCategory);
+            mtvName = itemView.findViewById(R.id.tvNameCategory);
+            mibDelete = itemView.findViewById(R.id.ibDeleteCategory);
         }
 
         @SuppressLint("SetTextI18n")
-        public void bind(final CategoryRealm category) {
+        public void bind(final Category category,
+                         final OnCategoryLongClickListener longClickListener,
+                         final OnCategoryClickDeleteListener deleteListener) {
 
-            this.name.setText(category.getName());
+            this.mtvName.setText(category.getName());
+
+            itemView.setOnLongClickListener(view -> {
+                longClickListener.onCategoryLongClick(mibDelete, category, getAdapterPosition());
+                return true;
+            });
+
+            mibDelete.setOnClickListener(view -> deleteListener.onDeleteCategory(category, getAdapterPosition()));
         }
     }
 }
