@@ -1,4 +1,4 @@
-package com.jrackham.ui;
+package com.jrackham.ui.category.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
 import com.jrackham.persistence.realm.model.CategoryRealm;
-import com.jrackham.persistence.realm.model.ProductRealm;
 
 import java.util.List;
 
@@ -21,11 +20,16 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     private Context context;
     private int layout;
     private List<CategoryRealm> categories;
+    private OnCategoryLongClickListener longClickListener;
+    private OnCategoryClickDeleteListener deleteListener;
 
-    public CategoryAdapter(Context context, int layout, List<CategoryRealm> categories) {
+
+    public CategoryAdapter(Context context, int layout, List<CategoryRealm> categories, OnCategoryLongClickListener longClickListener, OnCategoryClickDeleteListener deleteListener) {
         this.context = context;
         this.layout = layout;
         this.categories = categories;
+        this.longClickListener = longClickListener;
+        this.deleteListener = deleteListener;
     }
 
     @NonNull

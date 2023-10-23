@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/fondo_activity"
     android:theme="@style/Theme.MaterialComponents.Light.Bridge"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.product.activity.MainActivity">
 
     <ImageView
         android:id="@+id/ivHeader"

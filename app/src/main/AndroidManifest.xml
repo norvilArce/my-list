@@ -13,10 +13,10 @@
         android:theme="@style/Theme.MyList"
         tools:targetApi="31">
         <activity
-            android:name=".ui.CategoryActivity"
+            android:name=".ui.category.activity.CategoryActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.product.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

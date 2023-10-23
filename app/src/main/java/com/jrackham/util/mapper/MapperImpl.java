@@ -1,5 +1,6 @@
 package com.jrackham.util.mapper;
 
+import com.jrackham.model.Category;
 import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 import com.jrackham.persistence.realm.model.ProductRealm;
@@ -68,5 +69,43 @@ public class MapperImpl implements Mapper {
             maps.put(c.getName(), c.getId());
         }
         return maps;
+    }
+
+    @Override
+    public Category categoryRealmToCategory(CategoryRealm categoryRealm) {
+        Category category = new Category();
+        category.setId(categoryRealm.getId());
+        category.setName(categoryRealm.getName());
+        category.setProducts(productsRealmToProducts(categoryRealm.getProducts()));
+        return category;
+    }
+
+    @Override
+    public List<Category> categoriesRealmToCategories(List<CategoryRealm> categoryRealms) {
+        List<Category> categories = new ArrayList<>();
+        for (CategoryRealm c:       categoryRealms      ){
+            Category category = categoryRealmToCategory(c);
+            categories.add(category);
+        }
+        return categories;
+    }
+
+    @Override
+    public CategoryRealm categoryToCategoryRealm(Category category) {
+        CategoryRealm categoryRealm = new CategoryRealm();
+        categoryRealm.setId(category.getId());
+        categoryRealm.setName(category.getName());
+        categoryRealm.setProducts((RealmList<ProductRealm>) productsToProductsRealm(category.getProducts()));
+        return categoryRealm;
+    }
+
+    @Override
+    public List<CategoryRealm> categoriesToCategoriesRealm(List<Category> categories) {
+        List<CategoryRealm> categoryRealms = new ArrayList<>();
+        for (Category c:           categories  ){
+            CategoryRealm categoryRealm = categoryToCategoryRealm(c);
+            categoryRealms.add(categoryRealm);
+        }
+        return categoryRealms;
     }
 }

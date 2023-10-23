@@ -1,4 +1,4 @@
-package com.jrackham.ui;
+package com.jrackham.ui.product.adapter;
 
 import static com.jrackham.persistence.realm.service.CategoryService.getCategoryById;
 

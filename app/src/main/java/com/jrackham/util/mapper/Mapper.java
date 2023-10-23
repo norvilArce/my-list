@@ -1,5 +1,6 @@
 package com.jrackham.util.mapper;
 
+import com.jrackham.model.Category;
 import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 import com.jrackham.persistence.realm.model.ProductRealm;
@@ -15,4 +16,8 @@ public interface Mapper {
     List<ProductRealm> productsToProductsRealm(List<Product> product);
 
     HashMap<String,Integer> categoryNameAndIdToMap(List<CategoryRealm> categoryRealms);
+    Category categoryRealmToCategory(CategoryRealm categoryRealm);
+    List<Category> categoriesRealmToCategories(List<CategoryRealm> categoryRealms);
+    CategoryRealm categoryToCategoryRealm(Category category);
+    List<CategoryRealm> categoriesToCategoriesRealm(List<Category> categories);
 }

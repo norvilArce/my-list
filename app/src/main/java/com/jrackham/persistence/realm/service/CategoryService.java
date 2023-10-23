@@ -57,4 +57,14 @@ public class CategoryService {
         }
         realm.commitTransaction();
     }
+
+    public static void deleteCategoryRealmById(int id) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        CategoryRealm currentCategoryRealm = realm.where(CategoryRealm.class).equalTo("id", id).findFirst();
+        if (currentCategoryRealm != null) {
+            currentCategoryRealm.deleteFromRealm();
+        }
+        realm.commitTransaction();
+    }
 }

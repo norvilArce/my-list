@@ -1,10 +1,10 @@
-package com.jrackham.ui;
+package com.jrackham.ui.product.activity;
 
 import static com.jrackham.persistence.realm.service.CategoryService.addProductToCategoryById;
 import static com.jrackham.persistence.realm.service.CategoryService.getAllCategories;
 import static com.jrackham.persistence.realm.service.CategoryService.getCategoryById;
-import static com.jrackham.util.Validation.areCheckBoxesSelectables;
-import static com.jrackham.util.Validation.areCheckBoxesSelected;
+import static com.jrackham.util.UtilValidation.areCheckBoxesSelectables;
+import static com.jrackham.util.UtilValidation.areCheckBoxesSelected;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -40,6 +40,11 @@ import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 import com.jrackham.persistence.realm.model.ProductRealm;
 import com.jrackham.persistence.realm.service.ProductService;
+import com.jrackham.ui.category.activity.CategoryActivity;
+import com.jrackham.ui.product.adapter.OnProductClickEditListener;
+import com.jrackham.ui.product.adapter.OnProductClickListener;
+import com.jrackham.ui.product.adapter.OnProductLongClickListener;
+import com.jrackham.ui.product.adapter.ProductAdapter;
 import com.jrackham.util.DialogBuilder;
 import com.jrackham.util.StringUtil;
 import com.jrackham.util.UtilKeyboard;
@@ -87,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int media = 0;
     boolean closeApp = false;
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,26 +107,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setupView();
 
         layoutManager = new LinearLayoutManager(this);
-        adapter = new ProductAdapter(this, R.layout.items_products, products, (view, product, position) -> {
-            mllProductOptions.setVisibility(View.VISIBLE);
-            products.forEach(p -> p.setSelectable(true));
+        adapter = new ProductAdapter(this,
+                R.layout.items_products, products,
+                getOnProductLongClickListener(),
+                getOnProductClickListener(),
+                getOnProductClickEditListener());
 
-            products.get(position).setSelected(true);
-            adapter.setProducts(products);
-
-            adapter.notifyDataSetChanged();
-            return true;
-        }, (checkBox, product, position) -> {
-            if (areCheckBoxesSelectables(products)) {
-                product.setSelected(!checkBox.isChecked());
-                adapter.setProducts(products);
-                adapter.notifyDataSetChanged();
-                //Toast.makeText(MainActivity.this, "p-> " + product.getName(), Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        }, (product, position) -> {
-            showDialogEdit(product);
-        });
         mrvProducts.setLayoutManager(layoutManager);
         mrvProducts.setAdapter(adapter);
 
@@ -133,6 +123,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         updateViews();
         //setNumberOfProducts(15); todo
+    }
+
+    @NonNull
+    private OnProductClickEditListener getOnProductClickEditListener() {
+        return (product, position) -> {
+            showDialogEdit(product);
+        };
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @NonNull
+    private OnProductClickListener getOnProductClickListener() {
+        return (checkBox, product, position) -> {
+            if (areCheckBoxesSelectables(products)) {
+                product.setSelected(!checkBox.isChecked());
+                adapter.setProducts(products);
+                adapter.notifyDataSetChanged();
+                //Toast.makeText(MainActivity.this, "p-> " + product.getName(), Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        };
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    @NonNull
+    private OnProductLongClickListener getOnProductLongClickListener() {
+        return (view, product, position) -> {
+            mllProductOptions.setVisibility(View.VISIBLE);
+            products.forEach(p -> p.setSelectable(true));
+
+            products.get(position).setSelected(true);
+            adapter.setProducts(products);
+
+            adapter.notifyDataSetChanged();
+            return true;
+        };
     }
 
     private void showDialogEdit(Product product) {

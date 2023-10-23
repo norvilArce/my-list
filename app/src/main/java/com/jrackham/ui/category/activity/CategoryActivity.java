@@ -1,4 +1,4 @@
-package com.jrackham.ui;
+package com.jrackham.ui.category.activity;
 
 import static com.jrackham.persistence.realm.service.CategoryService.addCategory;
 import static com.jrackham.persistence.realm.service.CategoryService.getAllCategories;
@@ -7,7 +7,6 @@ import static com.jrackham.util.UtilKeyboard.closeKeyboard;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.text.Editable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,7 +22,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.jrackham.R;
 import com.jrackham.databinding.ActivityCategoryBinding;
 import com.jrackham.persistence.realm.model.CategoryRealm;
+import com.jrackham.ui.category.adapter.CategoryAdapter;
+import com.jrackham.util.UtilValidation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -53,7 +55,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         setupView();
 
         layoutManager = new LinearLayoutManager(this);
-        adapter = new CategoryAdapter(this, R.layout.items_categories, categories);
+        adapter = new CategoryAdapter(this, R.layout.items_categories, categories, longClickListener, deleteListener);
         mrvCategories.setLayoutManager(layoutManager);
         mrvCategories.setAdapter(adapter);
 
@@ -77,21 +79,25 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAddCategory:
-                if (!validateEmptyFields()) {
-                    createCategory();
-                    adapter.notifyDataSetChanged();
-                    metNameCategory.setText("");
-                    closeKeyboard(CategoryActivity.this);
-                }else{
+                List<TextInputEditText> fieldsToValidate = new ArrayList<>();
+                fieldsToValidate.add(metNameCategory);
+
+                if (UtilValidation.validateEmptyFields(fieldsToValidate)) {
+                    String categoryName = metNameCategory.getText().toString();
+                    if (!UtilValidation.validateExistCategory(categories, categoryName)) {
+                        createCategory();
+                        adapter.notifyDataSetChanged();
+                        metNameCategory.setText("");
+                        closeKeyboard(CategoryActivity.this);
+                    } else {
+                        Toast.makeText(this, "La categoria " + categoryName + " ya existe", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
                     Toast.makeText(this, "No has ingresado nada", Toast.LENGTH_SHORT).show();
                 }
         }
     }
 
-    private boolean validateEmptyFields() {
-        CharSequence text = metNameCategory.getText();
-        return text == null || text.toString().isEmpty();
-    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -104,6 +110,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         clearFocusAndCloseKB(this, ev);
         return super.dispatchTouchEvent(ev);
     }
+
     private CategoryRealm createCategory() {
         String name = metNameCategory.getText().toString().trim();
         Log.e(TAG, "name: -> " + name);
