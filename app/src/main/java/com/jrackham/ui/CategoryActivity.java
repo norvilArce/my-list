@@ -1,20 +1,25 @@
 package com.jrackham.ui;
 
-import static com.jrackham.persistence.realm.service.CategoryCRUD.addCategory;
-import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
+import static com.jrackham.persistence.realm.service.CategoryService.addCategory;
+import static com.jrackham.persistence.realm.service.CategoryService.getAllCategories;
+import static com.jrackham.util.UtilKeyboard.clearFocusAndCloseKB;
 import static com.jrackham.util.UtilKeyboard.closeKeyboard;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.jrackham.R;
 import com.jrackham.databinding.ActivityCategoryBinding;
 import com.jrackham.persistence.realm.model.CategoryRealm;
@@ -28,7 +33,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
 
     ActivityCategoryBinding binding;
     Button mbtnAddCategory;
-    EditText metNameCategory;
+    TextInputEditText metNameCategory;
     Toolbar mtbCategory;
 
     private List<CategoryRealm> categories = new RealmList<>();
@@ -59,7 +64,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
 
     private void setupView() {
         mbtnAddCategory = binding.btnAddCategory;
-        metNameCategory = binding.etNameCategory;
+        metNameCategory = binding.etCategoryName;
         mrvCategories = binding.rvCategories;
         mtbCategory = binding.tbCategory;
 
@@ -67,15 +72,25 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         setSupportActionBar(mtbCategory);
     }
 
+    @SuppressLint({"NotifyDataSetChanged", "NonConstantResourceId"})
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAddCategory:
-                createCategory();
-                adapter.notifyDataSetChanged();
-                metNameCategory.setText("");
-                closeKeyboard(CategoryActivity.this);
+                if (!validateEmptyFields()) {
+                    createCategory();
+                    adapter.notifyDataSetChanged();
+                    metNameCategory.setText("");
+                    closeKeyboard(CategoryActivity.this);
+                }else{
+                    Toast.makeText(this, "No has ingresado nada", Toast.LENGTH_SHORT).show();
+                }
         }
+    }
+
+    private boolean validateEmptyFields() {
+        CharSequence text = metNameCategory.getText();
+        return text == null || text.toString().isEmpty();
     }
 
     @Override
@@ -84,6 +99,11 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         return super.onSupportNavigateUp();
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        clearFocusAndCloseKB(this, ev);
+        return super.dispatchTouchEvent(ev);
+    }
     private CategoryRealm createCategory() {
         String name = metNameCategory.getText().toString().trim();
         Log.e(TAG, "name: -> " + name);

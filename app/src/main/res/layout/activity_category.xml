@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondo_activity"
+    android:theme="@style/Theme.MaterialComponents.Light.Bridge"
     tools:context=".ui.CategoryActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -21,17 +22,6 @@
         app:titleTextColor="@color/texto_boton_agregar" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCategories"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginVertical="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintWidth_percent=".9" />
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
@@ -43,17 +33,26 @@
         app:layout_constraintTop_toBottomOf="@+id/tbCategory"
         app:layout_constraintWidth_percent=".95">
 
-        <EditText
-            android:id="@+id/etNameCategory"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCategoryName"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="7dp"
+            android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:background="@drawable/et_bg_product"
-            android:hint="Nombre"
-            android:padding="5dp"
-            android:textColor="@color/texto"
-            android:textSize="15dp" />
+            android:layout_marginEnd="8dp"
+            style="@style/CustomEditText"
+            app:startIconDrawable="@drawable/baseline_check_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCategoryName"
+                style="@style/CustomTextBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Categoria"
+                android:inputType="textAutoComplete"
+                android:singleLine="true"
+                android:textColor="@color/texto"
+                android:textSize="15dp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btnAddCategory"
@@ -62,10 +61,36 @@
             android:layout_weight="1"
             android:background="@drawable/btn_bg_product"
             android:text="Agregar"
-            android:textColor="@color/texto_boton_agregar"
-            android:textAllCaps="false" />
+            android:textSize="15sp"
+            android:layout_marginVertical="3dp"
+            android:textAllCaps="false"
+            android:textColor="@color/texto_boton_agregar" />
 
     </LinearLayout>
 
+    <View
+        android:id="@+id/line"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/texto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias=".5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent=".95" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCategories"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        app:layout_constraintWidth_percent=".95" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

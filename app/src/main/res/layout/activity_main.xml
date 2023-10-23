@@ -64,7 +64,6 @@
             app:layout_constraintTop_toBottomOf="@id/etTitle"
             app:layout_constraintVertical_bias="0.0" />
 
-
         <View
             android:id="@+id/line"
             android:layout_width="0dp"
@@ -80,7 +79,7 @@
             app:layout_constraintWidth_percent=".9" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilNameProdcuct"
+            android:id="@+id/tilNameProduct"
             style="@style/CustomEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -109,8 +108,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@+id/tilNameProdcuct"
-            app:layout_constraintTop_toBottomOf="@id/tilNameProdcuct"
+            app:layout_constraintStart_toStartOf="@+id/tilNameProduct"
+            app:layout_constraintTop_toBottomOf="@id/tilNameProduct"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintWidth_percent=".35"
             app:startIconDrawable="@drawable/baseline_attach_money_24">
@@ -189,7 +188,7 @@
         android:id="@+id/llProductOptions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="-35dp"
+        android:layout_marginTop="-40dp"
         android:orientation="horizontal"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -221,12 +220,25 @@
         android:id="@+id/rvProducts"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalProducts"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/lineBottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/llProductOptions"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintWidth_percent=".9" />
+
+    <View
+        android:id="@+id/lineBottom"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/texto"
+        app:layout_constraintHorizontal_bias=".5"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent=".9"
+        app:layout_constraintStart_toStartOf="@+id/rvProducts"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalProducts"/>
 
     <TextView
         android:id="@+id/tvTotalProducts"

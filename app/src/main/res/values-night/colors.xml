@@ -30,7 +30,7 @@
     <color name="text_title">#D8D7D7</color>
 
     <color name="button_normal">#D39846</color>
-    <color name="button_pressed">#B35033</color>
+    <color name="button_pressed">@color/borde_cuadro</color>
     <color name="dialog_divider">@color/borde_edit_text</color>
 
     <color name="item_selected">#FFE600</color>

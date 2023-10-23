@@ -8,7 +8,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class ProductCRUD {
+public class ProductService {
 
     public static void addProductRealm(final ProductRealm product) {
         Realm realm = Realm.getDefaultInstance();
@@ -39,7 +39,6 @@ public class ProductCRUD {
         if (currentProductRealm != null) {
             currentProductRealm.setName(product.getName());
             currentProductRealm.setPrice(product.getPrice());
-            currentProductRealm.setPriority(product.getPriority());
             realm.insertOrUpdate(currentProductRealm);
             CategoryRealm categoryRealm = realm.where(CategoryRealm.class).equalTo("id", currentProductRealm.getCategoryId()).findFirst();
             if (categoryRealm != null) {

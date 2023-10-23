@@ -30,6 +30,10 @@ public class ProductRealm extends RealmObject {
         this.categoryId = categoryId;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

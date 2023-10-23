@@ -1,6 +1,6 @@
 package com.jrackham.ui;
 
-import static com.jrackham.persistence.realm.service.CategoryCRUD.getCategoryById;
+import static com.jrackham.persistence.realm.service.CategoryService.getCategoryById;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;

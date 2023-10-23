@@ -1,5 +1,6 @@
 package com.jrackham.util;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.Window;
@@ -27,21 +28,21 @@ public class DialogBuilder {
         return customDialog;
     }
 
-    public static Dialog getDialogEdit(Context context, String title, String text, Product product) {
-        // con este tema personalizado evitamos los bordes por defecto
+    @SuppressLint("SetTextI18n")
+    public static Dialog getDialogEdit(Context context, String title, Product product) {
         Dialog customDialog = new Dialog(context, R.style.Theme_Dialog_Translucent);
-        //deshabilitamos el título por defecto
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //obligamos al usuario a pulsar los botones para cerrarlo
         customDialog.setCancelable(false);
-        //establecemos el contenido de nuestro dialog
         customDialog.setContentView(R.layout.dialog_edit);
 
-        TextView titulo = customDialog.findViewById(R.id.titulo);
-        titulo.setText(title);
+        TextView metTitle = customDialog.findViewById(R.id.titulo);
+        metTitle.setText(title + " " + product.getName());
 
-        TextView contenido = customDialog.findViewById(R.id.contenido);
-        contenido.setText(text);
+        TextView metName = customDialog.findViewById(R.id.etName);
+        metName.setText(product.getName());
+
+        TextView metPrice = customDialog.findViewById(R.id.etPrice);
+        metPrice.setText(product.getPrice().toString());
         return customDialog;
     }
 }

@@ -21,6 +21,17 @@ public class MapperImpl implements Mapper {
     }
 
     @Override
+    public ProductRealm productToProductRealm(int id, Product product) {
+        String name = product.getName();
+        Float price = product.getPrice();
+        int priority = product.getPriority();
+        int categoryId = product.getCategoryId();
+        ProductRealm productRealm = new ProductRealm(name, price, priority, categoryId);
+        productRealm.setId(id);
+        return productRealm;
+    }
+
+    @Override
     public Product productRealmToProduct(ProductRealm productRealm) {
         int id = productRealm.getId();
         String name = productRealm.getName();

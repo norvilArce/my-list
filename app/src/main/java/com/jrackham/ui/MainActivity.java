@@ -1,15 +1,8 @@
 package com.jrackham.ui;
 
-import static com.jrackham.persistence.realm.service.CategoryCRUD.addProductToCategoryById;
-import static com.jrackham.persistence.realm.service.CategoryCRUD.getAllCategories;
-import static com.jrackham.persistence.realm.service.CategoryCRUD.getCategoryById;
-import static com.jrackham.persistence.realm.service.ProductCRUD.addProductRealm;
-import static com.jrackham.persistence.realm.service.ProductCRUD.deleteProductsRealm;
-import static com.jrackham.persistence.realm.service.ProductCRUD.getAllProductRealmsSortByPriority;
-import static com.jrackham.persistence.realm.service.ProductCRUD.updatePrioritiesBeforeToAddProduct;
-import static com.jrackham.persistence.realm.service.ProductCRUD.updatePrioritiesBeforeToDeleteProducts;
-import static com.jrackham.util.UtilKeyboard.clearFocusAndCloseKB;
-import static com.jrackham.util.UtilKeyboard.hideKeyBoard;
+import static com.jrackham.persistence.realm.service.CategoryService.addProductToCategoryById;
+import static com.jrackham.persistence.realm.service.CategoryService.getAllCategories;
+import static com.jrackham.persistence.realm.service.CategoryService.getCategoryById;
 import static com.jrackham.util.Validation.areCheckBoxesSelectables;
 import static com.jrackham.util.Validation.areCheckBoxesSelected;
 
@@ -46,8 +39,10 @@ import com.jrackham.databinding.ActivityMainBinding;
 import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 import com.jrackham.persistence.realm.model.ProductRealm;
+import com.jrackham.persistence.realm.service.ProductService;
 import com.jrackham.util.DialogBuilder;
 import com.jrackham.util.StringUtil;
+import com.jrackham.util.UtilKeyboard;
 import com.jrackham.util.mapper.Mapper;
 import com.jrackham.util.mapper.MapperImpl;
 
@@ -103,24 +98,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         categories = getAllCategories();
         //productRealms = getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS); todo implementar luego
-        productRealms = getAllProductRealmsSortByPriority();
+        productRealms = ProductService.getAllProductRealmsSortByPriority();
         products = mapper.productsRealmToProducts(productRealms);
         setupView();
 
         layoutManager = new LinearLayoutManager(this);
-        adapter = new ProductAdapter(this, R.layout.items_products, products, new OnProductLongClickListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public boolean onProductLongClick(View view, Product product, int position) {
-                mllProductOptions.setVisibility(View.VISIBLE);
-                products.forEach(p -> p.setSelectable(true));
+        adapter = new ProductAdapter(this, R.layout.items_products, products, (view, product, position) -> {
+            mllProductOptions.setVisibility(View.VISIBLE);
+            products.forEach(p -> p.setSelectable(true));
 
-                products.get(position).setSelected(true);
-                adapter.setProducts(products);
+            products.get(position).setSelected(true);
+            adapter.setProducts(products);
 
-                adapter.notifyDataSetChanged();
-                return true;
-            }
+            adapter.notifyDataSetChanged();
+            return true;
         }, (checkBox, product, position) -> {
             if (areCheckBoxesSelectables(products)) {
                 product.setSelected(!checkBox.isChecked());
@@ -130,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return true;
         }, (product, position) -> {
-            showAlertDialogEditConfirmation(product);
+            showDialogEdit(product);
         });
         mrvProducts.setLayoutManager(layoutManager);
         mrvProducts.setAdapter(adapter);
@@ -144,14 +135,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //setNumberOfProducts(15); todo
     }
 
-    private void showAlertDialogEditConfirmation(Product product) {
-        Dialog dialog = DialogBuilder.getDialogConfirm(MainActivity.this, "Editar", "Seguro que quieres editar " + product.getName());
+    private void showDialogEdit(Product product) {
+        Dialog dialog = DialogBuilder.getDialogEdit(MainActivity.this, "Editar", product);
 
         dialog.findViewById(R.id.aceptar).setOnClickListener(view -> {
+
+            String name = ((TextView) dialog.findViewById(R.id.etName)).getText().toString();
+            String price = ((TextView) dialog.findViewById(R.id.etPrice)).getText().toString();
+
+            product.setName(name);
+            product.setPrice(Float.parseFloat(price));
+
+            ProductService.updateProductRealm(mapper.productToProductRealm(product.getId(), product));
             dialog.dismiss();
             //onBackPressed();
-            //onBackPressed();
-            Toast.makeText(MainActivity.this, "a ver trata de editar " + product.getName(), Toast.LENGTH_SHORT).show();
+            updateProductsList();
+            updateViews();
+            UtilKeyboard.hideKeyBoard(MainActivity.this, mclRoot);
+            Toast.makeText(MainActivity.this, "Se edito : " + product.getName() + " con precio S/." + product.getPrice(), Toast.LENGTH_SHORT).show();
         });
         dialog.findViewById(R.id.cancelar).setOnClickListener(view -> {
             dialog.dismiss();
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         categories = getAllCategories();
         //products = mapper.productsRealmToProducts(getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS)); todo
-        products = mapper.productsRealmToProducts(getAllProductRealmsSortByPriority());
+        products = mapper.productsRealmToProducts(ProductService.getAllProductRealmsSortByPriority());
         setupView();
         updateViews();
     }
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("NotifyDataSetChanged")
     private void updateProductsList() {
         //products = mapper.productsRealmToProducts(getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS)); todo
-        products = mapper.productsRealmToProducts(getAllProductRealmsSortByPriority());
+        products = mapper.productsRealmToProducts(ProductService.getAllProductRealmsSortByPriority());
         adapter.setProducts(products);
         adapter.notifyDataSetChanged();
         mllProductOptions.setVisibility(View.INVISIBLE);
@@ -232,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        clearFocusAndCloseKB(this, ev);
+        UtilKeyboard.clearFocusAndCloseKB(this, ev);
         return super.dispatchTouchEvent(ev);
     }
 
@@ -262,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setNewPriorities() {
-        updatePrioritiesBeforeToDeleteProducts();
+        ProductService.updatePrioritiesBeforeToDeleteProducts();
         Log.e(TAG, "setNewPriorities: " + products);
     }
 
@@ -283,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 adapter.notifyDataSetChanged();
             } else {
-                showAlertDialogCloseAppConfirmation();
+                showDialogCloseAppConfirmation();
             }
         } else {
             super.onBackPressed();
@@ -291,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @SuppressLint("ResourceAsColor")
-    private void showAlertDialogCloseAppConfirmation() {
+    private void showDialogCloseAppConfirmation() {
         Dialog dialog = DialogBuilder.getDialogConfirm(this, "Salir", "¿Realmente deseas salir de la aplicacion?");
 
         dialog.findViewById(R.id.aceptar).setOnClickListener(view -> {
@@ -308,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void deleteSelectedProducts() {
         Toast.makeText(this, "Se eliminaron los productos: " + getProductsToDelete().stream().map(Product::getName).collect(Collectors.toList()), Toast.LENGTH_LONG).show();
-        deleteProductsRealm(getProductsToDelete().stream().map(Product::getId).collect(Collectors.toList()));
+        ProductService.deleteProductsRealm(getProductsToDelete().stream().map(Product::getId).collect(Collectors.toList()));
     }
 
     private Product createProduct() {
@@ -340,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (products.size() < 1) {
             product.setPriority(0);
             ProductRealm productRealm = mapper.productToProductRealm(product);
-            addProductRealm(productRealm);
+            ProductService.addProductRealm(productRealm);
             addProductToCategoryById(productRealm);
             updateInitLimits();
         } else {
@@ -351,13 +352,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void sortProductInList(Product product) {
         //actualiza la prioridad de los productos posteriores al ingresado
-        updatePrioritiesBeforeToAddProduct(leftLimit);
+        ProductService.updatePrioritiesBeforeToAddProduct(leftLimit);
 
         product.setPriority(leftLimit);
         ProductRealm productRealm = mapper.productToProductRealm(product);
 
         //agrega el producto a la db
-        addProductRealm(productRealm);
+        ProductService.addProductRealm(productRealm);
     }
 
     private void showAlertDialogValidatePriority(Product product) {
@@ -395,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dialog.dismiss();
             updateProductsList();
             updateViews();
-            hideKeyBoard(MainActivity.this, mclRoot);
+            UtilKeyboard.hideKeyBoard(MainActivity.this, mclRoot);
         });
     }
 
@@ -436,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @SuppressLint("ApplySharedPref")
     private void setNumberOfProducts(int n) {
-        int numberOfProductsInDB = getAllProductRealmsSortByPriority().size();
+        int numberOfProductsInDB = ProductService.getAllProductRealmsSortByPriority().size();
         if (n > numberOfProductsInDB) n = numberOfProductsInDB;
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("numberOfProducts", n);

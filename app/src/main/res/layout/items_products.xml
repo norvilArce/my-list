@@ -29,6 +29,7 @@
             android:id="@+id/tvNameProduct"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/texto"
             android:text="name"
             android:textSize="21dp" />
 
@@ -36,6 +37,7 @@
             android:id="@+id/tvCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/texto"
             android:text="category"
             android:textSize="13dp"
             android:textStyle="italic" />
@@ -52,9 +54,10 @@
             android:id="@+id/tvProductPrice"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="right"
+            android:gravity="center_vertical|right"
             android:paddingHorizontal="5dp"
             android:text="price"
+            android:textColor="@color/texto"
             android:textSize="15dp"
             android:textStyle="italic" />
 
@@ -63,11 +66,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:gravity="top"
-            android:paddingHorizontal="10dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="20dp"
-            android:visibility="gone"
+            android:padding="5dp"
+            android:layout_gravity="center_vertical|right"
             android:src="@drawable/baseline_edit_24" />
 
     </LinearLayout>
