@@ -63,8 +63,8 @@ public class MapperImpl implements Mapper {
     }
 
     @Override
-    public HashMap<String,Integer> categoryNameAndIdToMap(List<CategoryRealm> categoryRealms) {
-        HashMap<String,Integer> maps = new HashMap<String,Integer>();
+    public HashMap<String, Integer> categoryNameAndIdToMap(List<CategoryRealm> categoryRealms) {
+        HashMap<String, Integer> maps = new HashMap<String, Integer>();
         for (CategoryRealm c : categoryRealms) {
             maps.put(c.getName(), c.getId());
         }
@@ -73,17 +73,16 @@ public class MapperImpl implements Mapper {
 
     @Override
     public Category categoryRealmToCategory(CategoryRealm categoryRealm) {
-        Category category = new Category();
-        category.setId(categoryRealm.getId());
-        category.setName(categoryRealm.getName());
-        category.setProducts(productsRealmToProducts(categoryRealm.getProducts()));
-        return category;
+        int id = categoryRealm.getId();
+        String name = categoryRealm.getName();
+        List<Product> products = productsRealmToProducts(categoryRealm.getProducts());
+        return new Category(id, name, products);
     }
 
     @Override
     public List<Category> categoriesRealmToCategories(List<CategoryRealm> categoryRealms) {
         List<Category> categories = new ArrayList<>();
-        for (CategoryRealm c:       categoryRealms      ){
+        for (CategoryRealm c : categoryRealms) {
             Category category = categoryRealmToCategory(c);
             categories.add(category);
         }
@@ -102,7 +101,7 @@ public class MapperImpl implements Mapper {
     @Override
     public List<CategoryRealm> categoriesToCategoriesRealm(List<Category> categories) {
         List<CategoryRealm> categoryRealms = new ArrayList<>();
-        for (Category c:           categories  ){
+        for (Category c : categories) {
             CategoryRealm categoryRealm = categoryToCategoryRealm(c);
             categoryRealms.add(categoryRealm);
         }

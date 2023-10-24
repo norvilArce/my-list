@@ -2,10 +2,11 @@ package com.jrackham.model;
 
 import java.util.List;
 
-public class Category{
+public class Category {
     private int id;
     private String name;
     private List<Product> products;
+    private boolean isDeletable;
 
     public Category() {
     }
@@ -14,6 +15,21 @@ public class Category{
         this.id = id;
         this.name = name;
         this.products = products;
+        this.isDeletable = false;
+    }
+
+    public Category(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.isDeletable = false;
+    }
+
+    public boolean isDeletable() {
+        return isDeletable;
+    }
+
+    public void setDeletable(boolean deletable) {
+        isDeletable = deletable;
     }
 
     public int getId() {
@@ -45,7 +61,8 @@ public class Category{
         return "Category{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", productRealms=" + products +
+                ", products=" + products +
+                ", isDeletable=" + isDeletable +
                 '}';
     }
 }

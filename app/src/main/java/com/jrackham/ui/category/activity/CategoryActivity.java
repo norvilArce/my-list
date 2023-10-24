@@ -3,7 +3,6 @@ package com.jrackham.ui.category.activity;
 import static com.jrackham.persistence.realm.service.CategoryService.addCategory;
 import static com.jrackham.persistence.realm.service.CategoryService.getAllCategories;
 import static com.jrackham.util.UtilKeyboard.clearFocusAndCloseKB;
-import static com.jrackham.util.UtilKeyboard.closeKeyboard;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -11,10 +10,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,11 +23,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.jrackham.R;
 import com.jrackham.databinding.ActivityCategoryBinding;
 import com.jrackham.model.Category;
+import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
 import com.jrackham.persistence.realm.service.CategoryService;
 import com.jrackham.ui.category.adapter.CategoryAdapter;
-import com.jrackham.ui.category.adapter.OnCategoryClickDeleteListener;
-import com.jrackham.ui.category.adapter.OnCategoryLongClickListener;
+import com.jrackham.ui.category.adapter.SwipeToDeleteCallback;
 import com.jrackham.util.UtilValidation;
 import com.jrackham.util.mapper.Mapper;
 import com.jrackham.util.mapper.MapperImpl;
@@ -49,9 +50,11 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
 
     //list
     private RecyclerView mrvCategories;
+    ItemTouchHelper itemTouchHelper;
     RecyclerView.LayoutManager layoutManager;
     private CategoryAdapter adapter;
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,20 +65,32 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         setupView();
 
         layoutManager = new LinearLayoutManager(this);
-        adapter = new CategoryAdapter(this, R.layout.items_categories, mapper.categoriesRealmToCategories(categories), new OnCategoryLongClickListener() {
-            @Override
-            public boolean onCategoryLongClick(View view, Category category, int position) {
-                view.setVisibility(View.VISIBLE);
-                return true;
-            }
-        }, new OnCategoryClickDeleteListener() {
-            @Override
-            public void onDeleteCategory(Category category, int position) {
-                Toast.makeText(CategoryActivity.this, "¿en serio quieres elimnar: "+category.getName()+"?", Toast.LENGTH_SHORT).show();
-            }
-        });
+        adapter = new CategoryAdapter(this,
+                R.layout.items_categories,
+                mapper.categoriesRealmToCategories(categories),
+                (category, position) -> {
+                    Toast.makeText(CategoryActivity.this, getString(R.string.swipe_to_delete), Toast.LENGTH_SHORT).show();
+                    return true;
+                },
+                id -> {
+                    Category category = mapper.categoryRealmToCategory(CategoryService.getCategoryById(id));
+                    List<Product> products = category.getProducts();
+                    String message = "";
+                    if (products.size() > 0) {
+                        message = getString(R.string.cant_delete_category, category.getName());
+                    } else {
+                        CategoryService.deleteCategoryRealmById(id);
+                        adapter.setCategories(mapper.categoriesRealmToCategories(getAllCategories()));
+                        message = getString(R.string.category_deleted, category.getName());
+                    }
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                    adapter.notifyDataSetChanged();
+                });
         mrvCategories.setLayoutManager(layoutManager);
         mrvCategories.setAdapter(adapter);
+
+        itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(adapter));
+        itemTouchHelper.attachToRecyclerView(mrvCategories);
 
         mbtnAddCategory.setOnClickListener(this);
 
@@ -88,7 +103,7 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
         mrvCategories = binding.rvCategories;
         mtbCategory = binding.tbCategory;
 
-        mtbCategory.setTitle("Categories");
+        mtbCategory.setTitle(getString(R.string.categories));
         setSupportActionBar(mtbCategory);
     }
 
@@ -97,25 +112,24 @@ public class CategoryActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAddCategory:
-                List<TextInputEditText> fieldsToValidate = new ArrayList<>();
+                List<EditText> fieldsToValidate = new ArrayList<>();
                 fieldsToValidate.add(metNameCategory);
 
-                if (UtilValidation.validateEmptyFields(fieldsToValidate)) {
+                if (!UtilValidation.validateEmptyFields(fieldsToValidate)) {
                     String categoryName = metNameCategory.getText().toString();
                     if (!UtilValidation.validateExistCategory(categories, categoryName)) {
                         createCategory();
+                        adapter.setCategories(mapper.categoriesRealmToCategories(getAllCategories()));
                         adapter.notifyDataSetChanged();
                         metNameCategory.setText("");
-                        closeKeyboard(CategoryActivity.this);
                     } else {
-                        Toast.makeText(this, "La categoria " + categoryName + " ya existe", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.category_already_exists, categoryName), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(this, "No has ingresado nada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.empty_input), Toast.LENGTH_SHORT).show();
                 }
         }
     }
-
 
     @Override
     public boolean onSupportNavigateUp() {

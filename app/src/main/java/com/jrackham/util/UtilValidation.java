@@ -1,5 +1,7 @@
 package com.jrackham.util;
 
+import android.widget.EditText;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.jrackham.model.Product;
 import com.jrackham.persistence.realm.model.CategoryRealm;
@@ -35,16 +37,16 @@ public class UtilValidation {
     /**
      * validacion de campos de texto vacios
      * @param fields lista de campos a validar
-     * @return false si encuentra al menos uno vacio, sino true
+     * @return true si encuentra al menos uno vacio, sino false
      */
-    public static boolean validateEmptyFields(List<TextInputEditText> fields) {
-        for (TextInputEditText field : fields) {
+    public static boolean validateEmptyFields(List<EditText> fields) {
+        for (EditText field : fields) {
             CharSequence text = field.getText();
             if (text == null || text.toString().isEmpty()) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**

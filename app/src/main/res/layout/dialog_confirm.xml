@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/dialog_button_selector"
-            android:text="Aceptar"
+            android:text="@string/accept"
             android:textSize="15sp"
             android:layout_marginEnd="10dp"
             android:textColor="@color/texto_boton_agregar"
@@ -69,7 +69,7 @@
             android:textColor="@color/texto_boton_agregar"
             android:layout_marginHorizontal="3dp"
             android:background="@drawable/dialog_button_selector"
-            android:text="Cancelar"/>
+            android:text="@string/cancel"/>
     </LinearLayout>
 
 </LinearLayout>

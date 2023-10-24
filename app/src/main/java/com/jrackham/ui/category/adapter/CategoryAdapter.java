@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jrackham.R;
 import com.jrackham.model.Category;
-import com.jrackham.persistence.realm.model.CategoryRealm;
 
 import java.util.List;
 
@@ -23,30 +21,36 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     private int layout;
     private List<Category> categories;
     private OnCategoryLongClickListener longClickListener;
-    private OnCategoryClickDeleteListener deleteListener;
-
+    private DeleteCategoryListener deleteCategoryListener;
 
     public CategoryAdapter(Context context, int layout, List<Category> categories,
                            OnCategoryLongClickListener longClickListener,
-                           OnCategoryClickDeleteListener deleteListener) {
+                           DeleteCategoryListener deleteCategoryListener) {
         this.context = context;
         this.layout = layout;
         this.categories = categories;
         this.longClickListener = longClickListener;
-        this.deleteListener = deleteListener;
+        this.deleteCategoryListener = deleteCategoryListener;
+    }
+
+    public DeleteCategoryListener getDeleteCategoryListener() {
+        return deleteCategoryListener;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(categories.get(position), longClickListener, deleteListener);
+        holder.bind(categories.get(position), longClickListener);
     }
 
     @Override
@@ -54,29 +58,29 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return categories.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView mtvName;
-        private ImageButton mibDelete;
+    @Override
+    public long getItemId(int position) {
+        return categories.get(position).getId();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView mtvName;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mtvName = itemView.findViewById(R.id.tvNameCategory);
-            mibDelete = itemView.findViewById(R.id.ibDeleteCategory);
         }
 
         @SuppressLint("SetTextI18n")
         public void bind(final Category category,
-                         final OnCategoryLongClickListener longClickListener,
-                         final OnCategoryClickDeleteListener deleteListener) {
+                         final OnCategoryLongClickListener longClickListener) {
 
             this.mtvName.setText(category.getName());
 
             itemView.setOnLongClickListener(view -> {
-                longClickListener.onCategoryLongClick(mibDelete, category, getAdapterPosition());
+                longClickListener.onCategoryLongClick(category, getAdapterPosition());
                 return true;
             });
-
-            mibDelete.setOnClickListener(view -> deleteListener.onDeleteCategory(category, getAdapterPosition()));
         }
     }
 }

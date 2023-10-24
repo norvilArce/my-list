@@ -13,7 +13,6 @@ import io.realm.Realm;
 
 public class CategoryService {
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public static void addCategory(final CategoryRealm category) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

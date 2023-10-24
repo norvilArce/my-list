@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MyList</string>
     <string name="swipe_to_delete">Swipe right to delete an item</string>
@@ -15,7 +16,7 @@
     <string name="done">Done</string>
     <string name="exit_confirmation">Do you really want to exit the application?</string>
     <string name="exit">Exit</string>
-    <string name="delete_confirmation">Se eliminaron los productos: %1$s</string>
+    <string name="delete_confirmation">Deleted products: %1$s</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="select_categories">It seems you don\'t have any categories yet.</string>

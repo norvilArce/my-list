@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:letterSpacing="0.000005"
-            android:text="Lista de compras"
+            android:text="@string/list_tittle"
             android:textSize="34sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -55,7 +55,7 @@
             android:id="@+id/etMessage"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Añade elementos a tu lista y ordenalos segun tu necesidad."
+            android:text="@string/text_box_main"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/etTitle"
@@ -95,7 +95,7 @@
                 style="@style/CustomTextBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre"
+                android:hint="@string/name"
                 android:inputType="textAutoComplete"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -119,7 +119,7 @@
                 style="@style/CustomTextBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Precio"
+                android:hint="@string/price"
                 android:inputType="numberDecimal"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -130,7 +130,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
-            android:hint="Category"
+            android:hint="@string/category"
             app:layout_constraintBottom_toBottomOf="@+id/tilPriceProdcuct"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -169,7 +169,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/btn_bg_product"
-            android:text="Agregar"
+            android:text="@string/add"
             android:textAllCaps="false"
             android:textColor="@color/texto_boton_agregar"
             android:textSize="18sp"
@@ -203,7 +203,7 @@
             android:layout_weight="1"
             android:autofillHints="password"
             android:buttonTint="@color/borde_edit_text"
-            android:hint="Seleccionar todo"
+            android:hint="@string/select_all"
             android:textColorHint="@color/texto_boton_agregar" />
 
         <ImageButton
@@ -245,7 +245,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingHorizontal="7dp"
-        android:text="Total de productos: "
         android:textAlignment="textStart"
         android:textColor="@color/texto"
         app:layout_constraintBottom_toBottomOf="@+id/tvTotalAmount"
@@ -258,7 +257,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:paddingHorizontal="7dp"
-        android:text="Monto total: "
         android:textAlignment="textEnd"
         android:textColor="@color/texto"
         app:layout_constraintBottom_toBottomOf="parent"
