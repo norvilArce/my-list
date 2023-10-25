@@ -1,12 +1,15 @@
 package com.jrackham.app;
 
+import static com.jrackham.util.UtilPreferences.getNumberOfProductsListPreferences;
+
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.jrackham.model.realm.CategoryRealm;
-import com.jrackham.model.realm.ProductRealm;
+import com.jrackham.persistence.realm.model.CategoryRealm;
+import com.jrackham.persistence.realm.model.ProductRealm;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,9 +18,10 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
-@RequiresApi(api = Build.VERSION_CODES.O)
 public class MyApplication extends Application {
     private static final String DB_NAME = "priorities";
+    public static int NUMBER_OF_PRODUCTS;
+    SharedPreferences preferences;
 
     @Override
     public void onCreate() {
@@ -25,6 +29,8 @@ public class MyApplication extends Application {
         setUpRealmConfig();
         Realm realm = Realm.getDefaultInstance();
         realm.close();
+        preferences = getSharedPreferences("preferences", MODE_PRIVATE);
+        NUMBER_OF_PRODUCTS = getNumberOfProductsListPreferences(preferences);
     }
 
     private void setUpRealmConfig() {

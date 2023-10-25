@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lista de Compras</string>
+    <string name="swipe_to_delete">Para eliminar un elemento, desliza a la derecha</string>
+    <string name="cant_delete_category">No puedes eliminar la categoría %1$s porque tiene productos pendientes de compra</string>
+    <string name="category_deleted">Se ha eliminado la categoría %1$s</string>
+    <string name="categories">Categorías</string>
+    <string name="category_already_exists">La categoría %1$s ya existe</string>
+    <string name="empty_input">No has ingresado nada</string>
+    <string name="category_not_found">Parece que aún no tienes categorías. Vamos a crear tu primera categoría.</string>
+    <string name="validation">Validación</string>
+    <string name="validate_priority_message">¿Qué producto es más importante?</string>
+    <string name="important_product">Producto Importante</string>
+    <string name="new_product">Nuevo Producto</string>
+    <string name="product_validation">Validación de Producto</string>
+    <string name="done">Listo</string>
+    <string name="exit_confirmation">¿Realmente deseas salir de la aplicación?</string>
+    <string name="exit">Salir</string>
+    <string name="delete_confirmation">Se eliminaron los productos: %1$s</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="select_categories">Parece que aún no tienes categorías.</string>
+    <string name="create_category">Vamos a crear tu primera categoría.</string>
+    <string name="and">y</string>
+    <string name="edit">Editar</string>
+    <string name="product_edited_with_price">Se edito : %1$s con precio S/.%2$.2f</string>
+    <string name="products">%1$d productos</string>
+    <string name="formatted_amount">S/. %1$.2f</string>
+    <string name="delete">Eliminar</string>
+    <string name="confirm_delete_products">¿Confirmas que deseas eliminar los productos: %1$s?</string>
+    <string name="some_data_is_not_correct">Algún dato ingresado no es correcto</string>
+    <string name="name">Nombre</string>
+    <string name="price">Precio</string>
+    <string name="accept">Aceptar</string>
+    <string name="ok">OK</string>
+    <string name="list_tittle">Lista de compras</string>
+    <string name="text_box_main">Añade elementos a tu lista y ordénalos según tu necesidad</string>
+    <string name="category">Categoría</string>
+    <string name="add">Agregar</string>
+    <string name="select_all">Seleccionar todo</string>
+</resources>
