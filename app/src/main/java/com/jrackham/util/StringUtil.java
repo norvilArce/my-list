@@ -7,10 +7,10 @@ import com.jrackham.R;
 import java.util.List;
 
 public class StringUtil {
-    public static String setFinalAnd(List<String> productNames) {
+    public static String setFinalAnd(List<String> productNames, String and) {
         return StringUtil.replaceLast(productNames.toString().substring(1, productNames.toString().length() - 1),
                 ",",
-                Resources.getSystem().getString(R.string.and) + " ");
+                and + " ");
     }
 
     private static String replaceLast(String input, String search, String replace) {

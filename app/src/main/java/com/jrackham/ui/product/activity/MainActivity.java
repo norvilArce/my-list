@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int rightLimit = 0;
     int media = 0;
     boolean closeApp = false;
+    String and;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(binding.getRoot());
 
         preferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
-        resources = getResources();
 
         categories = CategoryService.getAllCategories();
         //productRealms = getNFirstProductRealmsSortByPriority(NUMBER_OF_PRODUCTS); todo implementar luego
@@ -240,8 +240,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mcbAllProductSelected = binding.cbAllProductSelected;
         mactvCategory = binding.actvCategory;
         mclRoot = binding.clRoot;
+
         List<String> categoryNames = categories.stream().map(CategoryRealm::getName).collect(Collectors.toList());
         mactvCategory.setAdapter(new ArrayAdapter<>(this, R.layout.drop_down_item_categories, categoryNames));
+
+        resources = getResources();
+        and = resources.getString(R.string.and);
     }
 
     @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged"})
@@ -278,8 +282,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void validateDelete() {
         List<Product> listProductsToDelete = getProductsToDelete();
         List<String> productNames = listProductsToDelete.stream().map(Product::getName).collect(Collectors.toList());
-        String namesProductsToDelete = StringUtil.setFinalAnd(productNames);
-        Dialog dialog = DialogBuilder.getDialogConfirm(this, resources.getString(R.string.delete), String.format(resources.getString(R.string.confirm_delete_products), namesProductsToDelete));
+        String namesProductsToDelete = StringUtil.setFinalAnd(productNames, and);
+        Dialog dialog = DialogBuilder.getDialogConfirm(this,
+                resources.getString(R.string.delete),
+                String.format(resources.getString(R.string.confirm_delete_products), namesProductsToDelete));
 
         dialog.findViewById(R.id.aceptar).setOnClickListener(view -> {
             deleteSelectedProducts();
@@ -362,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void deleteSelectedProducts() {
 
         List<String> productNames = getProductsToDelete().stream().map(Product::getName).collect(Collectors.toList());
-        String namesProductsToDelete = StringUtil.setFinalAnd(productNames);
+        String namesProductsToDelete = StringUtil.setFinalAnd(productNames, and);
 
         String toastMessage = String.format(resources.getString(R.string.delete_confirmation), namesProductsToDelete);
 

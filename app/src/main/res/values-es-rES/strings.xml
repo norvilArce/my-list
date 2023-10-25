@@ -23,7 +23,7 @@
     <string name="create_category">Vamos a crear tu primera categoría.</string>
     <string name="and">y</string>
     <string name="edit">Editar</string>
-    <string name="product_edited_with_price">Se edito : %1$s con precio S/.%2$d</string>
+    <string name="product_edited_with_price">Se edito : %1$s con precio S/.%2$.2f</string>
     <string name="products">%1$d productos</string>
     <string name="formatted_amount">S/. %1$.2f</string>
     <string name="delete">Eliminar</string>

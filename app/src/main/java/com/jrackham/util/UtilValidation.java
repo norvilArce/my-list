@@ -42,7 +42,7 @@ public class UtilValidation {
     public static boolean validateEmptyFields(List<EditText> fields) {
         for (EditText field : fields) {
             CharSequence text = field.getText();
-            if (text == null || text.toString().isEmpty()) {
+            if (text == null || text.toString().trim().isEmpty()) {
                 return true;
             }
         }

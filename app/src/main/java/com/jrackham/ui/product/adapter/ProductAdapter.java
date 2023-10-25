@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -70,6 +71,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         private TextView mtvPrice;
         private TextView mtvCategory;
         private RelativeLayout mrlCheck;
+        private RelativeLayout mrlFake;
         private CheckBox mcbProductSelected;
         private ImageButton mibEditProduct;
 
@@ -79,6 +81,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             mtvPrice = itemView.findViewById(R.id.tvProductPrice);
             mtvCategory = itemView.findViewById(R.id.tvCategory);
             mrlCheck = itemView.findViewById(R.id.rlCheck);
+            mrlFake = itemView.findViewById(R.id.rlFake);
             mcbProductSelected = itemView.findViewById(R.id.cbAllProductSelected);
             mibEditProduct = itemView.findViewById(R.id.ibEditProduct);
         }
@@ -99,21 +102,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             this.mcbProductSelected.setChecked(product.isSelected());
 
             //cuando se da click al elemento
-            itemView.setOnClickListener(v -> clickListener.onProductClick(mcbProductSelected, product, getAdapterPosition()));
+            mrlFake.setOnClickListener(v -> clickListener.onProductClick(mcbProductSelected, product, getAdapterPosition()));
 
             //cuando se mantiene presionado
-            itemView.setOnLongClickListener(v -> {
+            mrlFake.setOnLongClickListener(v -> {
                 longClickListener.onProductLongClick(mrlCheck, product, getAdapterPosition());
                 return true;
             });
 
             //cuando se da click al boton editar
-            mibEditProduct.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    clickEditListener.onEditProduct(product, getAdapterPosition());
-                }
-            });
+            mibEditProduct.setOnClickListener(view -> clickEditListener.onEditProduct(product, getAdapterPosition()));
         }
     }
 }
