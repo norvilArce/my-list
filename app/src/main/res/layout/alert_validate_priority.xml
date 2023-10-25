@@ -30,6 +30,6 @@
         android:layout_marginHorizontal="10dp"
         android:layout_weight="1"
         android:visibility="gone"
-        android:text="OK" />
+        android:text="@string/ok" />
 
 </LinearLayout>

@@ -1,43 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".CategoryActivity">
+    android:background="@color/fondo_activity"
+    android:theme="@style/Theme.MaterialComponents.Light.Bridge"
+    tools:context=".ui.category.activity.CategoryActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tbCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/status_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:titleTextColor="@color/texto_boton_agregar" />
+
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_weight="7"
-        android:background="@color/teal_700"
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tbCategory"
+        app:layout_constraintWidth_percent=".95">
 
-        <EditText
-            android:id="@+id/etNameCategory"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCategoryName"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:hint="Nombre"
-            android:padding="5dp"
-            android:textSize="15dp" />
+            android:layout_marginEnd="8dp"
+            style="@style/CustomEditText"
+            app:startIconScaleType="centerInside"
+            app:startIconDrawable="@drawable/baseline_label_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCategoryName"
+                style="@style/CustomTextBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/category"
+                android:layout_marginStart="2dp"
+                android:inputType="textAutoComplete"
+                android:singleLine="true"
+                android:textColor="@color/texto"
+                android:textSize="15dp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btnAddCategory"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Agregar" />
-
-
+            android:background="@drawable/btn_bg_product"
+            android:text="@string/add"
+            android:textSize="15sp"
+            android:layout_marginVertical="3dp"
+            android:textAllCaps="false"
+            android:textColor="@color/texto_boton_agregar" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lvCategories"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2" />
+    <View
+        android:id="@+id/line"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/texto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias=".5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent=".95" />
 
-</LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCategories"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        app:layout_constraintWidth_percent=".95" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
